@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Madad</string>
+    <string name="login_button_text">Get Started</string>
+    <string name="register_helper_text">Haven\'t registered yet?</string>
+    <string name="register_button_text">" Register"</string>
+    <string name="welcome_text">We\'re here for you when you need it most</string>
+</resources>

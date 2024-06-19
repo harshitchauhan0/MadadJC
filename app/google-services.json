@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "112308650928",
+    "project_id": "madad-651e4",
+    "storage_bucket": "madad-651e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112308650928:android:a12dd02d9508cdeb758c75",
+        "android_client_info": {
+          "package_name": "com.harshit.madad"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC126Q22FDBjxzVlj-tWHUwKn2Gt672bG8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
