@@ -38,35 +38,35 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .systemBarsPadding(),
                     navController = controller,
-                    startDestination = AppScreen.RegisterScreen.route,
-                    enterTransition = {
-                        slideIntoContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Left,
-                            animationSpec = tween(400, easing = FastOutSlowInEasing)
-                        )
-                    },
-                    exitTransition = {
-                        slideOutOfContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Left,
-                            animationSpec = tween(400, easing = FastOutSlowInEasing)
-                        )
-                    },
-                    popEnterTransition = {
-                        slideIntoContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Right,
-                            animationSpec = tween(400, easing = FastOutSlowInEasing)
-                        )
-                    },
-                    popExitTransition = {
-                        slideOutOfContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Right,
-                            animationSpec = tween(400, easing = FastOutSlowInEasing)
-                        )
-                    }
+                    startDestination = AppScreen.RegisterScreen.route
                 ) {
                     navigation(
                         route = AppScreen.RegisterScreen.route,
-                        startDestination = AppScreen.RegisterScreen.WelcomeScreen.route
+                        startDestination = AppScreen.RegisterScreen.WelcomeScreen.route,
+                        enterTransition = {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        },
+                        popEnterTransition = {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        }
                     ) {
                         composable(AppScreen.RegisterScreen.WelcomeScreen.route) {
                             WelcomeScreen(controller = controller)
@@ -80,17 +80,34 @@ class MainActivity : ComponentActivity() {
                     }
                     navigation(
                         route = AppScreen.MainScreen.route,
-                        startDestination = AppScreen.MainScreen.HomeScreen.route
+                        startDestination = AppScreen.MainScreen.HomeScreen.route,
+                        enterTransition = {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Up,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Up,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        },
+                        popEnterTransition = {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Down,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Down,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        }
                     ) {
                         composable(AppScreen.MainScreen.HomeScreen.route) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "Hello"
-                                )
-                            }
+
                         }
                     }
                 }
