@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -59,6 +61,7 @@ import com.harshit.madad.authentication.presentation.viewmodels.AuthViewModel
 import com.harshit.madad.ui.theme.PurpleGrey40
 import com.harshit.madad.ui.theme.lightBlue
 import com.harshit.madad.ui.theme.lightGreen
+import com.harshit.madad.ui.theme.lightGrey
 
 @Composable
 fun LoginScreen(
@@ -82,6 +85,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(lightGrey)
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -94,7 +98,9 @@ fun LoginScreen(
         EmailInput(viewModel, config)
         Spacer(modifier = Modifier.height(16.dp))
         PasswordInput(viewModel, config)
-        ForgetPassword { viewModel.showForgotPassword(true) }
+        ForgetPassword(config = config, onClick = {
+            viewModel.showForgotPassword(true)
+        })
         ErrorMessage(state.error)
         Spacer(modifier = Modifier.height(if (config.orientation == Configuration.ORIENTATION_PORTRAIT) 64.dp else 24.dp))
         SignInButton(viewModel, buttonEnabled, config)
@@ -231,8 +237,11 @@ fun ForgetPasswordHeading() {
 }
 
 @Composable
-fun ForgetPassword(onClick: () -> Unit) {
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+fun ForgetPassword(onClick: () -> Unit, config: Configuration) {
+    Box(
+        modifier = Modifier.fillMaxWidth(if (config.orientation == Configuration.ORIENTATION_PORTRAIT) 1.0f else 0.7f),
+        contentAlignment = Alignment.CenterEnd
+    ) {
         Text(
             text = "Forget Password?",
             style = MaterialTheme.typography.bodyLarge,
@@ -253,8 +262,9 @@ fun AuthLogo() {
         painter = painterResource(id = R.drawable.auth_logo1),
         contentDescription = "Auth Logo",
         modifier = Modifier
-            .fillMaxHeight(0.4f)
             .fillMaxWidth(0.7f)
+            .fillMaxHeight(0.4f)
+            .clip(RoundedCornerShape(20))
     )
 }
 
@@ -285,7 +295,11 @@ fun EmailInput(viewModel: AuthViewModel, config: Configuration) {
         },
         modifier = Modifier.fillMaxWidth(if (config.orientation == Configuration.ORIENTATION_PORTRAIT) 1.0f else 0.7f),
         singleLine = true,
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White
+        )
     )
 }
 
@@ -306,7 +320,11 @@ fun PasswordInput(viewModel: AuthViewModel, config: Configuration) {
         },
         modifier = Modifier.fillMaxWidth(if (config.orientation == Configuration.ORIENTATION_PORTRAIT) 1.0f else 0.7f),
         singleLine = true,
-        shape = RoundedCornerShape(12.dp)
+        shape = RoundedCornerShape(12.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White
+        )
     )
 }
 
