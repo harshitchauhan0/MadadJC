@@ -27,10 +27,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -39,6 +41,7 @@ import com.harshit.madad.authentication.presentation.viewmodels.AuthViewModel
 import com.harshit.madad.authentication.presentation.viewmodels.CreateAccountState
 import com.harshit.madad.authentication.util.AppScreen
 import com.harshit.madad.ui.theme.Pink80
+import com.harshit.madad.ui.theme.darkBlue
 import com.harshit.madad.ui.theme.lightGreen
 import com.harshit.madad.ui.theme.lightOrange
 
@@ -61,7 +64,7 @@ fun SignUpScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(lightOrange)
+            .background(darkBlue)
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -93,13 +96,14 @@ fun LoginLogo() {
         contentDescription = "Auth Logo",
         modifier = Modifier
             .fillMaxHeight(0.4f)
-            .fillMaxWidth(0.7f)
+            .fillMaxWidth(0.7f).clip(RoundedCornerShape(20.dp))
     )
     Spacer(modifier = Modifier.height(16.dp))
     Text(
         text = "Sign Up",
         style = MaterialTheme.typography.headlineMedium,
-        color = Pink80,
+        color = Color.White,
+        fontWeight = FontWeight.W700,
         fontFamily = FontFamily.SansSerif
     )
 }
@@ -119,7 +123,7 @@ fun LoginButton(viewModel: AuthViewModel, buttonEnabled: State<Boolean>, config:
     ElevatedButton(
         onClick = viewModel::onCreateAccount, shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = lightGreen,
+            containerColor = Color.Blue,
             contentColor = Color.White
         ), elevation = ButtonDefaults.elevatedButtonElevation(
             defaultElevation = 14.dp,

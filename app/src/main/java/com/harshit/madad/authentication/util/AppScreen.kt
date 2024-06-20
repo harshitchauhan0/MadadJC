@@ -9,4 +9,5 @@ sealed class AppScreen(val route: String) {
     object MainScreen : AppScreen("home_navigation_graph"){
         object HomeScreen : AppScreen("home")
     }
+    object SplashScreen: AppScreen("splash")
 }

@@ -7,22 +7,21 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
+import androidx.compose.material.AlertDialog
 import androidx.compose.ui.Modifier
-import com.harshit.madad.ui.theme.MadadTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.harshit.madad.authentication.presentation.components.AlertDialogEmailCheck
 import com.harshit.madad.authentication.presentation.components.LoginScreen
 import com.harshit.madad.authentication.presentation.components.SignUpScreen
 import com.harshit.madad.authentication.presentation.components.WelcomeScreen
 import com.harshit.madad.authentication.util.AppScreen
-import com.harshit.madad.authentication.util.navigateToHome
+import com.harshit.madad.common.splash.SplashScreen
+import com.harshit.madad.ui.theme.MadadTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -38,8 +37,11 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .systemBarsPadding(),
                     navController = controller,
-                    startDestination = AppScreen.RegisterScreen.route
+                    startDestination = AppScreen.SplashScreen.route
                 ) {
+                    composable(AppScreen.SplashScreen.route) {
+                        SplashScreen(controller = controller)
+                    }
                     navigation(
                         route = AppScreen.RegisterScreen.route,
                         startDestination = AppScreen.RegisterScreen.WelcomeScreen.route,
@@ -68,6 +70,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     ) {
+
                         composable(AppScreen.RegisterScreen.WelcomeScreen.route) {
                             WelcomeScreen(controller = controller)
                         }

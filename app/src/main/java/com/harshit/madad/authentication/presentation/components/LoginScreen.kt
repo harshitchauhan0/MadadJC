@@ -11,6 +11,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,7 +27,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -45,12 +48,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,9 +64,11 @@ import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.viewmodels.AuthViewModel
 import com.harshit.madad.authentication.util.navigateToHome
 import com.harshit.madad.ui.theme.PurpleGrey40
+import com.harshit.madad.ui.theme.darkBlue
 import com.harshit.madad.ui.theme.lightBlue
 import com.harshit.madad.ui.theme.lightGreen
 import com.harshit.madad.ui.theme.lightGrey
+import com.harshit.madad.ui.theme.normalBlue
 
 @Composable
 fun LoginScreen(
@@ -85,7 +92,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(lightGrey)
+            .background(darkBlue)
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -162,7 +169,7 @@ fun ForgetPasswordContent(viewModel: AuthViewModel, config: Configuration) {
                     ErrorMessage(error = forgetState.error)
                     Button(
                         onClick = viewModel::onForgetPassWord,
-                        colors = ButtonDefaults.buttonColors(lightGreen)
+                        colors = ButtonDefaults.buttonColors(darkBlue)
                     ) {
                         Text(text = "Submit")
                     }
@@ -170,10 +177,61 @@ fun ForgetPasswordContent(viewModel: AuthViewModel, config: Configuration) {
             }
         }
         if (forgetState.isForgetPassword) {
-            viewModel.showForgotPassword(false)
+            AlertDialogEmailCheck(
+                message = "Please check your email you have received link to reset your password",
+                onConfirm = { viewModel.showForgotPassword(false) }
+            )
         }
     }
 }
+
+@Composable
+fun AlertDialogEmailCheck(
+    message: String,
+    onConfirm: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.BottomCenter,
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color(0xAA000000))
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp)
+                .background(Color.White, shape = RoundedCornerShape(12.dp))
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = "Info Icon",
+                tint = darkBlue,
+                modifier = Modifier.size(48.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = message,
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = PurpleGrey40
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            Button(
+                onClick = onConfirm,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = darkBlue)
+            ) {
+                Text(text = "OK")
+            }
+        }
+    }
+}
+
 
 @Composable
 fun RemoveForgetPasswordBox(config: Configuration, onClick: () -> Unit) {
@@ -201,7 +259,7 @@ fun ForgetPasswordInput(viewModel: AuthViewModel, config: Configuration) {
             Icon(
                 imageVector = Icons.Default.Email,
                 contentDescription = "Email",
-                tint = lightGreen
+                tint = normalBlue
             )
         },
         placeholder = {
@@ -211,8 +269,9 @@ fun ForgetPasswordInput(viewModel: AuthViewModel, config: Configuration) {
         singleLine = true,
         shape = RoundedCornerShape(12.dp),
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = lightGreen
-        )
+            focusedBorderColor = lightBlue
+        ),
+        visualTransformation = PasswordVisualTransformation()
     )
     Spacer(modifier = Modifier.height(24.dp))
 }
@@ -223,14 +282,14 @@ fun ForgetPasswordHeading() {
         text = "Forget Password?",
         style = MaterialTheme.typography.headlineSmall,
         fontWeight = FontWeight.Bold,
-        color = lightGreen
+        color = darkBlue
     )
     Spacer(modifier = Modifier.height(16.dp))
     Text(
         text = "Enter your email address we'll send you \n a link to reset your password",
         style = MaterialTheme.typography.bodyMedium,
         fontWeight = FontWeight.Bold,
-        color = lightGreen,
+        color = darkBlue,
         textAlign = TextAlign.Center
     )
     Spacer(modifier = Modifier.height(16.dp))
@@ -246,7 +305,7 @@ fun ForgetPassword(onClick: () -> Unit, config: Configuration) {
             text = "Forget Password?",
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.W500,
-            color = lightBlue,
+            color = lightGrey,
             modifier = Modifier
                 .clickable {
                     onClick()
@@ -273,7 +332,7 @@ fun WelcomeText() {
     Text(
         text = "Harshit Welcomes You",
         style = MaterialTheme.typography.headlineMedium,
-        color = lightBlue,
+        color = Color.White,
         fontFamily = FontFamily.SansSerif
     )
 }
@@ -287,7 +346,7 @@ fun EmailInput(viewModel: AuthViewModel, config: Configuration) {
             Icon(
                 imageVector = Icons.Default.Email,
                 contentDescription = "Email",
-                tint = lightBlue
+                tint = normalBlue
             )
         },
         placeholder = {
@@ -312,7 +371,7 @@ fun PasswordInput(viewModel: AuthViewModel, config: Configuration) {
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = "PassWord",
-                tint = lightBlue
+                tint = normalBlue
             )
         },
         placeholder = {
@@ -324,7 +383,8 @@ fun PasswordInput(viewModel: AuthViewModel, config: Configuration) {
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.White,
             unfocusedContainerColor = Color.White
-        )
+        ),
+        visualTransformation = PasswordVisualTransformation()
     )
 }
 
@@ -344,7 +404,7 @@ fun SignInButton(viewModel: AuthViewModel, buttonEnabled: State<Boolean>, config
         onClick = viewModel::onSignAccount,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = lightBlue,
+            containerColor = Color.Blue,
             contentColor = Color.White,
         ),
         elevation = ButtonDefaults.elevatedButtonElevation(

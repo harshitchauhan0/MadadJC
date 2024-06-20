@@ -42,17 +42,13 @@ import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.viewmodels.AuthViewModel
 import com.harshit.madad.authentication.util.AppScreen
 import com.harshit.madad.ui.theme.MadadTheme
+import com.harshit.madad.ui.theme.darkBlue
 import com.harshit.madad.ui.theme.lightBlue
+import kotlinx.coroutines.delay
 
 @Composable
 fun WelcomeScreen(controller: NavHostController, viewModel: AuthViewModel = hiltViewModel()) {
     val backgroundImage: Painter = painterResource(id = R.drawable.welcome_logo)
-    val isSignedIn by viewModel.navigateToHome.collectAsState()
-    LaunchedEffect(Unit) {
-        if (isSignedIn) {
-            navigateToHome(controller)
-        }
-    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -91,7 +87,7 @@ fun WelcomeScreen(controller: NavHostController, viewModel: AuthViewModel = hilt
                 modifier = Modifier
                     .widthIn(max = 320.dp)
                     .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = lightBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = darkBlue),
                 elevation = ButtonDefaults.elevatedButtonElevation(
                     defaultElevation = 12.dp,
                     pressedElevation = 0.dp
