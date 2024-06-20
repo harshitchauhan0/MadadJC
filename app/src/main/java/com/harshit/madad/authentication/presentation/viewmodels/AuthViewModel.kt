@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshit.madad.authentication.domain.use_cases.CreateUseCases
+import com.harshit.madad.authentication.domain.use_cases.ForgetPasswordUseCase
 import com.harshit.madad.authentication.domain.use_cases.SignInUseCase
 import com.harshit.madad.common.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,8 @@ import kotlin.math.log
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
-    private val createUseCases: CreateUseCases
+    private val createUseCases: CreateUseCases,
+    private val forgetPasswordUseCase: ForgetPasswordUseCase
 ) : ViewModel() {
 
     private val _email = mutableStateOf("")
@@ -33,6 +35,15 @@ class AuthViewModel @Inject constructor(
 
     private val _signInState = mutableStateOf(SignInState())
     val signInState: State<SignInState> = _signInState
+
+    private val _showForgotPassword = mutableStateOf(false)
+    val showForgotPasswordState: State<Boolean> = _showForgotPassword
+
+    private val _forgetPasswordMail = mutableStateOf("")
+    val forgetPasswordMail: State<String> = _forgetPasswordMail
+
+    private val _forgetPasswordState = mutableStateOf(ForgetPasswordState())
+    val forgetPasswordState: State<ForgetPasswordState> = _forgetPasswordState
 
     fun onCreateAccount() {
         val email = email.value
@@ -54,15 +65,18 @@ class AuthViewModel @Inject constructor(
                     is Resource.Success -> {
                         _createState.value = CreateAccountState(isAccountCreated = true)
                     }
+
                     is Resource.Error -> {
                         _createState.value =
                             CreateAccountState(error = result.message ?: "Unknown Error")
                     }
+
                     is Resource.Loading -> {
                         _createState.value = CreateAccountState(isLoading = true)
                     }
                 }
-            }.launchIn(this)}
+            }.launchIn(this)
+        }
     }
 
     fun onSignAccount() {
@@ -108,6 +122,41 @@ class AuthViewModel @Inject constructor(
                 password.any { it.isDigit() }
     }
 
+    fun onForgetPassWord() {
+        val email = forgetPasswordMail.value
+
+        if (!isValidEmail(email)) {
+            _forgetPasswordState.value = ForgetPasswordState(error = "Invalid email")
+            return
+        }
+        Log.v("CLICK","CLICL")
+        viewModelScope.launch {
+            forgetPasswordUseCase(email).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _forgetPasswordState.value = ForgetPasswordState(isForgetPassword = true)
+                    }
+
+                    is Resource.Error -> {
+                        _forgetPasswordState.value = ForgetPasswordState(error = result.message ?: "Unknown Error")
+                    }
+
+                    is Resource.Loading -> {
+                        _forgetPasswordState.value = ForgetPasswordState(isLoading = true)
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
+
+    fun showForgotPassword(value: Boolean) {
+        _showForgotPassword.value = value
+        _forgetPasswordMail.value = email.value
+    }
+
+    fun forgetPasswordMailChange(newMail: String) {
+        _forgetPasswordMail.value = newMail
+    }
 
     fun emailChange(newEmail: String) {
         _email.value = newEmail

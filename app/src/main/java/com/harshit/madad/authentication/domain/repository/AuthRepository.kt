@@ -14,4 +14,10 @@ interface AuthRepository {
         onSignInSuccess: () -> Unit,
         onSignInFailed: (Exception) -> Unit
     )
+
+    fun forgetPassword(
+        email: String,
+        onSignInSuccess: () -> Unit,
+        onSignInFailed: (Exception) -> Unit
+    )
 }

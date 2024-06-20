@@ -67,7 +67,9 @@ fun SignUpScreen(
             viewModel.email.value.isNotBlank() && viewModel.passWord.value.isNotBlank()
         }
     }
-
+    if (state.isLoading) {
+        LoadingIndicator()
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -81,6 +83,7 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(24.dp))
         EmailInput(viewModel, config)
         Spacer(modifier = Modifier.height(16.dp))
+
         PasswordInput(viewModel, config)
         ErrorLoginMessage(state = state)
         Spacer(modifier = Modifier.height(if (config.orientation == Configuration.ORIENTATION_PORTRAIT) 64.dp else 24.dp))
@@ -89,9 +92,7 @@ fun SignUpScreen(
 
     AuthBackgroundImage()
 
-    if (state.isLoading) {
-        LoadingIndicator()
-    } else if (state.isAccountCreated) {
+     if (state.isAccountCreated) {
         controller.popBackStack()
         controller.navigate(AuthScreen.LoginScreen.route)
     }
