@@ -20,4 +20,6 @@ interface AuthRepository {
         onSignInSuccess: () -> Unit,
         onSignInFailed: (Exception) -> Unit
     )
+
+    fun checkUserExist(): Boolean
 }

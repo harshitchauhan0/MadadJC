@@ -11,11 +11,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,8 +54,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.viewmodels.AuthViewModel
+import com.harshit.madad.authentication.util.navigateToHome
 import com.harshit.madad.ui.theme.PurpleGrey40
 import com.harshit.madad.ui.theme.lightBlue
 import com.harshit.madad.ui.theme.lightGreen
@@ -67,7 +67,7 @@ import com.harshit.madad.ui.theme.lightGrey
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: AuthViewModel = hiltViewModel(),
-    onNavigate: () -> Unit
+    controller: NavHostController
 ) {
     val state by viewModel.signInState
     val config = LocalConfiguration.current
@@ -110,7 +110,7 @@ fun LoginScreen(
     if (state.isLoading) {
         LoadingIndicator()
     } else if (state.isSignedIn) {
-        onNavigate()
+        navigateToHome(controller)
     }
     AnimatedVisibility(
         visible = forgetPasswordState,

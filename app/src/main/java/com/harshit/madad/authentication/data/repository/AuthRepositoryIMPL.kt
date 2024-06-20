@@ -52,4 +52,8 @@ class AuthRepositoryIMPL : AuthRepository {
             }
         }
     }
+
+    override fun checkUserExist(): Boolean {
+        return FirebaseAuth.getInstance().currentUser != null
+    }
 }

@@ -16,41 +16,29 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.viewmodels.AuthViewModel
 import com.harshit.madad.authentication.presentation.viewmodels.CreateAccountState
-import com.harshit.madad.authentication.util.AuthScreen
-import com.harshit.madad.common.Resource
+import com.harshit.madad.authentication.util.AppScreen
 import com.harshit.madad.ui.theme.Pink80
-import com.harshit.madad.ui.theme.PurpleGrey40
 import com.harshit.madad.ui.theme.lightGreen
 import com.harshit.madad.ui.theme.lightOrange
 
@@ -94,7 +82,7 @@ fun SignUpScreen(
 
      if (state.isAccountCreated) {
         controller.popBackStack()
-        controller.navigate(AuthScreen.LoginScreen.route)
+        controller.navigate(AppScreen.LoginScreen.route)
     }
 }
 

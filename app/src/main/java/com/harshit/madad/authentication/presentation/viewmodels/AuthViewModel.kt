@@ -6,11 +6,15 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.harshit.madad.authentication.domain.use_cases.CheckLoggedInUseCase
 import com.harshit.madad.authentication.domain.use_cases.CreateUseCases
 import com.harshit.madad.authentication.domain.use_cases.ForgetPasswordUseCase
 import com.harshit.madad.authentication.domain.use_cases.SignInUseCase
 import com.harshit.madad.common.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -21,8 +25,34 @@ import kotlin.math.log
 class AuthViewModel @Inject constructor(
     private val signInUseCase: SignInUseCase,
     private val createUseCases: CreateUseCases,
-    private val forgetPasswordUseCase: ForgetPasswordUseCase
+    private val forgetPasswordUseCase: ForgetPasswordUseCase,
+    private val checkLoggedInUseCase: CheckLoggedInUseCase
 ) : ViewModel() {
+
+    private val _navigateToHome = MutableStateFlow(false)
+    val navigateToHome: StateFlow<Boolean> = _navigateToHome.asStateFlow()
+
+    init {
+        checkUserAuthentication()
+    }
+
+    private fun checkUserAuthentication() {
+        viewModelScope.launch {
+            checkLoggedInUseCase.invoke().onEach { result->
+                when(result){
+                    is Resource.Error -> {
+
+                    }
+                    is Resource.Loading -> {
+
+                    }
+                    is Resource.Success -> {
+                        _navigateToHome.value = true
+                    }
+                }
+            }.launchIn(this)
+        }
+    }
 
     private val _email = mutableStateOf("")
     val email: State<String> = _email
