@@ -7,12 +7,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.harshit.madad.ui.theme.MadadTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.harshit.madad.authentication.presentation.components.LoginScreen
 import com.harshit.madad.authentication.presentation.components.SignUpScreen
@@ -34,7 +38,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .systemBarsPadding(),
                     navController = controller,
-                    startDestination = AppScreen.WelcomeScreen.route,
+                    startDestination = AppScreen.RegisterScreen.route,
                     enterTransition = {
                         slideIntoContainer(
                             AnimatedContentTransitionScope.SlideDirection.Left,
@@ -60,20 +64,36 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 ) {
-                    composable(AppScreen.WelcomeScreen.route) {
-                        WelcomeScreen(controller = controller)
+                    navigation(
+                        route = AppScreen.RegisterScreen.route,
+                        startDestination = AppScreen.RegisterScreen.WelcomeScreen.route
+                    ) {
+                        composable(AppScreen.RegisterScreen.WelcomeScreen.route) {
+                            WelcomeScreen(controller = controller)
+                        }
+                        composable(AppScreen.RegisterScreen.LoginScreen.route) {
+                            LoginScreen(controller = controller)
+                        }
+                        composable(AppScreen.RegisterScreen.SignUpScreen.route) {
+                            SignUpScreen(controller = controller)
+                        }
                     }
-                    composable(AppScreen.LoginScreen.route) {
-                        LoginScreen(controller = controller)
-                    }
-                    composable(AppScreen.SignUpScreen.route) {
-                        SignUpScreen(controller = controller)
-                    }
-                    composable(AppScreen.HomeScreen.route) {
-
+                    navigation(
+                        route = AppScreen.MainScreen.route,
+                        startDestination = AppScreen.MainScreen.HomeScreen.route
+                    ) {
+                        composable(AppScreen.MainScreen.HomeScreen.route) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = "Hello"
+                                )
+                            }
+                        }
                     }
                 }
-
             }
         }
     }

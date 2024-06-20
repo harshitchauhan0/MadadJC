@@ -82,7 +82,7 @@ fun SignUpScreen(
 
      if (state.isAccountCreated) {
         controller.popBackStack()
-        controller.navigate(AppScreen.LoginScreen.route)
+        controller.navigate(AppScreen.RegisterScreen.LoginScreen.route)
     }
 }
 

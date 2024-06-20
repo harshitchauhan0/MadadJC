@@ -86,7 +86,7 @@ fun WelcomeScreen(controller: NavHostController, viewModel: AuthViewModel = hilt
             Spacer(Modifier.height(18.dp))
             ElevatedButton(
                 onClick = {
-                    controller.navigate(AppScreen.LoginScreen.route)
+                    controller.navigate(AppScreen.RegisterScreen.LoginScreen.route)
                 },
                 modifier = Modifier
                     .widthIn(max = 320.dp)
@@ -132,7 +132,7 @@ fun WelcomeScreen(controller: NavHostController, viewModel: AuthViewModel = hilt
                     },
                     style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp),
                     onClick = {
-                        controller.navigate(AppScreen.SignUpScreen.route)
+                        controller.navigate(AppScreen.RegisterScreen.SignUpScreen.route)
                     }
                 )
             }
