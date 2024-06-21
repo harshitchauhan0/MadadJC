@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -50,6 +52,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -57,6 +61,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -64,6 +69,7 @@ import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.viewmodels.AuthViewModel
 import com.harshit.madad.authentication.util.navigateToHome
 import com.harshit.madad.ui.theme.PurpleGrey40
+import com.harshit.madad.ui.theme.blur
 import com.harshit.madad.ui.theme.darkBlue
 import com.harshit.madad.ui.theme.lightBlue
 import com.harshit.madad.ui.theme.lightGreen
@@ -92,7 +98,7 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(darkBlue)
+            .background(blur)
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -417,19 +423,57 @@ fun SignInButton(viewModel: AuthViewModel, buttonEnabled: State<Boolean>, config
     ) {
         Text(text = "Let's get started")
     }
-}
-
-@Composable
+}@Composable
 fun AuthBottomEndImage() {
+    val lightBlue = Color(0xFFA68CF8)
+    val mediumBlue = Color(0xFFBBA7EC)
+    val purple = Color(0xFFE2CCDC)
+
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.BottomEnd
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.bottomcircle),
-            contentDescription = "Auth Bottom End",
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val width = size.width
+            val height = size.height
+            // Draw background arcs
+            drawArc(
+                color = lightBlue,
+                startAngle = 90f,
+                sweepAngle = 360f,
+                useCenter = true,
+                topLeft = Offset(width * 0.4f, height * 0.8f),
+                size = Size(width, height)
+            )
+
+            drawArc(
+                color = mediumBlue,
+                startAngle = 180f,
+                sweepAngle = 90f,
+                useCenter = true,
+                topLeft = Offset(width * 0.3f, height * 0.65f),
+                size = Size(width, height)
+            )
+
+            drawArc(
+                color = purple,
+                startAngle = 190f,
+                sweepAngle = 90f,
+                useCenter = true,
+                topLeft = Offset(-width * 0.1f, height * 0.75f),
+                size = Size(width, height)
+            )
+        }
+
+        Icon(
+            imageVector = Icons.Default.Star,
+            contentDescription = "Star Icon",
+            tint = Color.White,
             modifier = Modifier
-                .size(90.dp)
+                .size(48.dp)
                 .align(Alignment.BottomEnd)
+                .padding(16.dp)
         )
     }
 }

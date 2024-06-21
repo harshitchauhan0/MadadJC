@@ -10,6 +10,9 @@ import com.harshit.madad.authentication.domain.use_cases.CheckLoggedInUseCase
 import com.harshit.madad.authentication.domain.use_cases.CreateUseCases
 import com.harshit.madad.authentication.domain.use_cases.ForgetPasswordUseCase
 import com.harshit.madad.authentication.domain.use_cases.SignInUseCase
+import com.harshit.madad.authentication.util.CreateAccountState
+import com.harshit.madad.authentication.util.ForgetPasswordState
+import com.harshit.madad.authentication.util.SignInState
 import com.harshit.madad.common.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +22,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(

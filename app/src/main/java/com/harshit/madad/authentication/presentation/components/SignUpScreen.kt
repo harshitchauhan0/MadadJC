@@ -38,12 +38,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.viewmodels.AuthViewModel
-import com.harshit.madad.authentication.presentation.viewmodels.CreateAccountState
-import com.harshit.madad.authentication.util.AppScreen
-import com.harshit.madad.ui.theme.Pink80
+import com.harshit.madad.authentication.util.CreateAccountState
+import com.harshit.madad.common.AppScreen
 import com.harshit.madad.ui.theme.darkBlue
-import com.harshit.madad.ui.theme.lightGreen
-import com.harshit.madad.ui.theme.lightOrange
 
 @Composable
 fun SignUpScreen(

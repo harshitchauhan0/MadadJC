@@ -1,6 +1,5 @@
 package com.harshit.madad.authentication.presentation.components
 
-import com.harshit.madad.authentication.util.navigateToHome
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,9 +17,6 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,19 +28,15 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.FirebaseAuth
 import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.viewmodels.AuthViewModel
-import com.harshit.madad.authentication.util.AppScreen
-import com.harshit.madad.ui.theme.MadadTheme
+import com.harshit.madad.common.AppScreen
 import com.harshit.madad.ui.theme.darkBlue
 import com.harshit.madad.ui.theme.lightBlue
-import kotlinx.coroutines.delay
 
 @Composable
 fun WelcomeScreen(controller: NavHostController, viewModel: AuthViewModel = hiltViewModel()) {

@@ -1,4 +1,4 @@
-package com.harshit.madad.authentication.presentation.viewmodels
+package com.harshit.madad.authentication.util
 
 data class ForgetPasswordState (
     val isLoading:Boolean = false,

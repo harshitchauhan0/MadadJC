@@ -13,6 +13,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val darkBlue = Color(color = 0xFF063970)
 val normalBlue = Color(color = 0xFF326AFD)
+val blur = Color(color = 0xFF4444B6)
 val lightBlue = Color(color = 0xFF3693E9)
 val lightOrange = Color(color = 0xFFfff7ef)
 val lightGreen = Color(color = 0xFF50ccc3)
