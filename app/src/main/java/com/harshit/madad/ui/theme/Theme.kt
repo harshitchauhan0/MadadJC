@@ -39,6 +39,11 @@ val MyTypography = Typography(
         fontFamily = myCustomFontFamily,
         fontWeight = FontWeight.W700,
         fontSize = 11.sp
+    ),
+    headlineMedium = TextStyle(
+        fontFamily = myCustomFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp
     )
     // Define other text styles as needed
 )

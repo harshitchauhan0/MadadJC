@@ -16,17 +16,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor():ViewModel() {
-    fun onLogout(){
+class HomeViewModel @Inject constructor() : ViewModel() {
+    fun onLogout() {
 
     }
 
     private val _callState = MutableStateFlow(CallState())
-    val callState:StateFlow<CallState> = _callState
+    val callState: StateFlow<CallState> = _callState
 
-    fun onCallClick(){
+    fun onCallClick() {
         viewModelScope.launch {
-//          TODO -> HERE I HAVE TO CHANGE THE LOADING STATE AND DO THE NUMBER SAVING AND GETTING SAVED DATA
             _callState.value = CallState(isLoading = true)
             delay(5000)
             _callState.value = CallState(isCalling = true, number = "1234567890")
