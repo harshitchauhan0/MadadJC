@@ -1,6 +1,7 @@
 package com.harshit.madad.home.presentation.components
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -31,6 +32,8 @@ import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,6 +54,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
@@ -146,41 +150,52 @@ fun FeatureCard(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Box(modifier = Modifier
-            .fillMaxSize(maxWidth)
-            .aspectRatio(1f)
-            .padding(8.dp)
-            .clickable {
-                if (featureName.route != null) {
-                    controller.navigate(featureName.route)
-                } else {
-                    onCallClick()
+        Card(
+            modifier = Modifier
+                .fillMaxSize(maxWidth)
+                .aspectRatio(1f)
+                .padding(8.dp)
+                .graphicsLayer {
+                    this.scaleX = scale.value
+                    this.scaleY = scale.value
+                    this.alpha = alpha.value
+                },
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 12.dp,
+                pressedElevation = 0.dp
+            )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(featureName.backGroundColor)
+                    .clip(RoundedCornerShape(20.dp))
+                    .clickable {
+                        if (featureName.route != null) {
+                            controller.navigate(featureName.route)
+                        } else {
+                            onCallClick()
+                        }
+                    },
+                contentAlignment = if (configuration == Configuration.ORIENTATION_PORTRAIT) Alignment.TopStart else Alignment.Center
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Icon(
+                        imageVector = featureName.imageVector!!,
+                        contentDescription = featureName.contentDescription,
+                        tint = featureName.iconTint
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = featureName.text,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.W700,
+                        fontFamily = FontFamily.SansSerif,
+                        fontSize = 20.sp,
+                        fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
+                        color = Color.Black
+                    )
                 }
-            }
-            .graphicsLayer {
-                this.scaleX = scale.value
-                this.scaleY = scale.value
-                this.alpha = alpha.value
-            }
-            .clip(RoundedCornerShape(20.dp))
-            .background(featureName.backGroundColor),
-            contentAlignment = if (configuration == Configuration.ORIENTATION_PORTRAIT) Alignment.TopStart else Alignment.Center) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Icon(
-                    imageVector = featureName.imageVector!!,
-                    contentDescription = featureName.contentDescription,
-                    tint = featureName.iconTint
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = featureName.text,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.W700,
-                    fontFamily = FontFamily.SansSerif,
-                    fontSize = 20.sp,
-                    fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
-                    color = Color.Black
-                )
             }
         }
         Spacer(modifier = Modifier.height(16.dp))

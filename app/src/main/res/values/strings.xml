@@ -4,4 +4,8 @@
     <string name="register_helper_text">Haven\'t registered yet?</string>
     <string name="register_button_text">" Register"</string>
     <string name="welcome_text">We\'re here for you when you need it most</string>
+    <string name="profile_screen_heading">Profile</string>
+    <string name="message_screen_heading">Message</string>
+    <string name="message_screen_info">This message will be sent to your emergency contacts. You can edit the message before sending.</string>
+    <string name="message_placeholder">Enter Message</string>
 </resources>

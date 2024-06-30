@@ -52,8 +52,10 @@ import com.harshit.madad.authentication.presentation.components.SignUpScreen
 import com.harshit.madad.authentication.presentation.components.WelcomeScreen
 import com.harshit.madad.common.AppScreen
 import com.harshit.madad.common.splash.SplashScreen
+import com.harshit.madad.home.data.remote.dto.Guardian
 import com.harshit.madad.home.presentation.components.GuardianScreen
 import com.harshit.madad.home.presentation.components.HomeScreen
+import com.harshit.madad.home.presentation.components.MessageScreen
 import com.harshit.madad.home.presentation.components.ProfileScreen
 import com.harshit.madad.home.presentation.viewmodels.HomeViewModel
 import com.harshit.madad.ui.theme.MadadTheme
@@ -64,21 +66,61 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
             MadadTheme {
-                val controller = rememberNavController()
+                val navController = rememberNavController()
                 NavHost(
                     modifier = Modifier
                         .fillMaxSize()
                         .systemBarsPadding(),
-                    navController = controller,
+                    navController = navController,
                     startDestination = AppScreen.SplashScreen.route
                 ) {
                     composable(AppScreen.SplashScreen.route) {
-                        SplashScreen(controller = controller)
+                        SplashScreen(controller = navController)
                     }
-                    navigation(route = AppScreen.RegisterScreen.route,
+                    navigation(
+                        route = AppScreen.RegisterScreen.route,
                         startDestination = AppScreen.RegisterScreen.WelcomeScreen.route,
+                        enterTransition = {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Up,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Up,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        },
+                        popEnterTransition = {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Down,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Down,
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            )
+                        }
+                    ) {
+                        composable(AppScreen.RegisterScreen.WelcomeScreen.route) {
+                            WelcomeScreen(controller = navController)
+                        }
+                        composable(AppScreen.RegisterScreen.LoginScreen.route) {
+                            LoginScreen(controller = navController)
+                        }
+                        composable(AppScreen.RegisterScreen.SignUpScreen.route) {
+                            SignUpScreen(controller = navController)
+                        }
+                    }
+                    navigation(
+                        route = AppScreen.MainScreen.route,
+                        startDestination = AppScreen.MainScreen.HomeScreen.route,
                         enterTransition = {
                             slideIntoContainer(
                                 AnimatedContentTransitionScope.SlideDirection.Left,
@@ -102,53 +144,25 @@ class MainActivity : ComponentActivity() {
                                 AnimatedContentTransitionScope.SlideDirection.Right,
                                 animationSpec = tween(400, easing = FastOutSlowInEasing)
                             )
-                        }) {
-
-                        composable(AppScreen.RegisterScreen.WelcomeScreen.route) {
-                            WelcomeScreen(controller = controller)
                         }
-                        composable(AppScreen.RegisterScreen.LoginScreen.route) {
-                            LoginScreen(controller = controller)
-                        }
-                        composable(AppScreen.RegisterScreen.SignUpScreen.route) {
-                            SignUpScreen(controller = controller)
-                        }
-                    }
-                    navigation(
-                        route = AppScreen.MainScreen.route,
-                        startDestination = AppScreen.MainScreen.HomeScreen.route
                     ) {
-                        composable(AppScreen.MainScreen.HomeScreen.route, enterTransition = {
-                            slideIntoContainer(
-                                AnimatedContentTransitionScope.SlideDirection.Up,
-                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                        composable(AppScreen.MainScreen.HomeScreen.route) {
+                            HomeScreen(
+                                controller = navController,
+                                onCallClick = ::callSuperGuardian
                             )
-                        }, exitTransition = {
-                            slideOutOfContainer(
-                                AnimatedContentTransitionScope.SlideDirection.Up,
-                                animationSpec = tween(400, easing = FastOutSlowInEasing)
-                            )
-                        }, popEnterTransition = {
-                            slideIntoContainer(
-                                AnimatedContentTransitionScope.SlideDirection.Down,
-                                animationSpec = tween(400, easing = FastOutSlowInEasing)
-                            )
-                        }, popExitTransition = {
-                            slideOutOfContainer(
-                                AnimatedContentTransitionScope.SlideDirection.Down,
-                                animationSpec = tween(400, easing = FastOutSlowInEasing)
-                            )
-                        }) {
-                            HomeScreen(controller, onCallClick = ::callSuperGuardian)
                         }
                         composable(AppScreen.MainScreen.MessageScreen.route) {
-
+                            MessageScreen(controller = navController,onHelpClick = { superGuardianNumber, guardianList,message ->
+                                callSuperGuardian(superGuardianNumber)
+                                messageGuardian(guardianList,message)
+                            })
                         }
                         composable(AppScreen.MainScreen.GuardianScreen.route) {
                             GuardianScreen()
                         }
                         composable(AppScreen.MainScreen.ProfileScreen.route) {
-                            ProfileScreen(controller)
+                            ProfileScreen(controller = navController)
                         }
                     }
                 }
@@ -158,11 +172,16 @@ class MainActivity : ComponentActivity() {
 
     private fun callSuperGuardian(number: String) {
         if (checkCallPermission()) {
-            val phoneIntent = Intent(Intent.ACTION_CALL).apply {
-                data = Uri.parse("tel: $number")
-            }
-            startActivity(phoneIntent)
+//            val phoneIntent = Intent(Intent.ACTION_CALL).apply {
+//                data = Uri.parse("tel: $number")
+//            }
+//            startActivity(phoneIntent)
         }
+        Log.v("TAGGY",number)
+    }
+    private fun messageGuardian(guardian: List<Guardian>,message: String){
+        Log.v("TAGGY",guardian.toString())
+        Log.v("TAGGY",message)
     }
 
     private fun checkCallPermission(): Boolean {
