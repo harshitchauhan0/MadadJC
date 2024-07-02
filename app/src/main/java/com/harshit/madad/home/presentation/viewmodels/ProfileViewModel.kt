@@ -110,8 +110,19 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
         _showGuardianDialog.value = GuardianDialogState(show, contactItem)
     }
 
-    fun saveSuperGuardian(contactItem: ContactItem?) {
-
+    fun saveSuperGuardian(contact: ContactItem?) {
+        if (contact != null) {
+            val updatedList = _contactState.value.contactList.map { contactItem ->
+                if (contact == contactItem) {
+                    contactItem.copy(isSuperGuardian = true)
+                } else if (contactItem.isSuperGuardian) {
+                    contactItem.copy(isSuperGuardian = false)
+                } else {
+                    contactItem
+                }
+            }
+            _contactState.value = _contactState.value.copy(contactList = updatedList)
+        }
     }
 
     fun fetchContacts() {

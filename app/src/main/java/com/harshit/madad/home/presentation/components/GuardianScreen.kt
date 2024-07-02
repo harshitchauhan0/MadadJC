@@ -1,10 +1,9 @@
 package com.harshit.madad.home.presentation.components
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,13 +25,20 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -91,6 +97,7 @@ fun GuardianScreen(
                     text = stringResource(id = R.string.guardian_helping_text),
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
+                Spacer(modifier = Modifier.height(16.dp))
             }
             items(state.contactList.size) { i ->
                 ContactListItem(onLongClick = {
@@ -120,30 +127,6 @@ fun GuardianScreen(
     }
 }
 
-//@OptIn(ExperimentalFoundationApi::class)
-//@Composable
-//fun ContactListItem(
-//    onLongClick: () -> Unit, onToggle: () -> Unit, item: ContactItem
-//) {
-//    Row(
-//        modifier = Modifier
-//            .combinedClickable(
-//                onClick = {}, onLongClick = onLongClick
-//            )
-//            .fillMaxWidth()
-//            .padding(16.dp), verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        ContactRadioSection(
-//            item.isSelected, onToggle, Color.Blue
-//        )
-//        ContactSection(
-//            modifier = Modifier.weight(1f), name = item.name, phoneNumber = item.phoneNumber
-//        )
-//        if (item.isSuperGuardian) {
-//            SuperGuardianTextSection()
-//        }
-//    }
-//}
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ContactListItem(
@@ -151,6 +134,9 @@ fun ContactListItem(
     onToggle: () -> Unit,
     item: ContactItem
 ) {
+    val gradient = Brush.horizontalGradient(
+        colors = listOf(darkViolet.copy(alpha = 0.8f), darkViolet.copy(alpha = 0.3f), darkViolet.copy(alpha = 0.0f))
+    )
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -160,36 +146,22 @@ fun ContactListItem(
                 onLongClick = onLongClick
             ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White
-        )
+        shape = RoundedCornerShape(16.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.background(gradient).padding(top = 12.dp, bottom = 12.dp, end = 16.dp)
         ) {
             ContactRadioSection(
                 selected = item.isSelected,
                 onToggle = onToggle,
                 colors = Color.Blue
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.name,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.body1
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = item.phoneNumber,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.caption
-                )
-            }
+            ContactSection(
+                name = item.name,
+                phoneNumber = item.phoneNumber,
+                modifier = Modifier.weight(1f)
+            )
             if (item.isSuperGuardian) {
                 Spacer(modifier = Modifier.width(16.dp))
                 SuperGuardianTextSection()
@@ -246,16 +218,37 @@ fun ContactSection(modifier: Modifier = Modifier, name: String, phoneNumber: Str
     Spacer(modifier = Modifier.width(16.dp))
     Column(modifier = modifier) {
         Text(
-            text = name, maxLines = 1, overflow = TextOverflow.Ellipsis
+            text = name,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.body1,
+            fontWeight = FontWeight.W500
         )
-        Text(text = phoneNumber, maxLines = 1)
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = phoneNumber,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = MaterialTheme.typography.caption,
+            fontWeight = FontWeight.W400
+        )
     }
 }
 
 @Composable
 fun SuperGuardianTextSection(modifier: Modifier = Modifier) {
+    var isOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(Unit) {
+        isOpen = true
+    }
+    val scaleX by animateFloatAsState(targetValue = if (isOpen) 1f else 0f, label = "Scale X")
     Box(
         modifier = Modifier
+            .graphicsLayer {
+                this.scaleX = scaleX
+            }
             .background(
                 color = Color.Green,
                 shape = RoundedCornerShape(4.dp)
