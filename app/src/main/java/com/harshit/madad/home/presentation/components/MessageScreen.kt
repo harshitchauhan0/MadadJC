@@ -28,7 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.components.LoadingIndicator
-import com.harshit.madad.home.data.remote.dto.Guardian
+import com.harshit.madad.home.data.remote.dto.ContactItem
 import com.harshit.madad.home.presentation.viewmodels.MessageViewModel
 import com.harshit.madad.ui.theme.darkPurple
 import com.harshit.madad.ui.theme.lightPurple
@@ -36,7 +36,7 @@ import com.harshit.madad.ui.theme.lightPurple
 @Composable
 fun MessageScreen(
     controller: NavHostController,
-    onHelpClick: (superGuardianNumber: String, guardianList: List<Guardian>, message: String) -> Unit,
+    onHelpClick: (superGuardianNumber: String, guardianList: List<ContactItem>, message: String) -> Unit,
     viewModel: MessageViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()

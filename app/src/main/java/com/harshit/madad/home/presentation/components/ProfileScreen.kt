@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -70,7 +71,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.harshit.madad.R
 import com.harshit.madad.common.AppScreen
-import com.harshit.madad.home.data.remote.dto.Guardian
+import com.harshit.madad.home.data.remote.dto.ContactItem
 import com.harshit.madad.home.presentation.viewmodels.ProfileViewModel
 import com.harshit.madad.ui.theme.MyTypography
 import com.harshit.madad.ui.theme.darkGreen
@@ -128,7 +129,7 @@ fun ProfileScreen(controller: NavHostController, viewModel: ProfileViewModel = h
             }
             item {
                 Spacer(modifier = Modifier.height(12.dp))
-                ProfileButton("Continue", viewModel::updateNameAndEmail, isOpen)
+                ProfileButton("Continue", viewModel::updateName, isOpen)
                 Spacer(modifier = Modifier.height(12.dp))
             }
             items(state.guardians, key = { it.key }) { guardian ->
@@ -201,7 +202,7 @@ fun ProfileContinueButton(onAddGuardianClick: () -> Unit, isOpen: Boolean) {
 }
 
 @Composable
-fun GuardianItem(guardian: Guardian, onRemoveGuardian: () -> Unit, modifier: Modifier) {
+fun GuardianItem(guardian: ContactItem, onRemoveGuardian: () -> Unit, modifier: Modifier) {
     val configuration = LocalConfiguration.current.orientation
     Column(
         modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
@@ -262,6 +263,7 @@ fun ProfileButton(text: String, onClick: () -> Unit, isOpen: Boolean) {
         label = "Scale"
     )
     val configuration = LocalConfiguration.current.orientation
+    val keyboardController = LocalSoftwareKeyboardController.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -274,7 +276,10 @@ fun ProfileButton(text: String, onClick: () -> Unit, isOpen: Boolean) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ElevatedButton(
-            onClick = onClick,
+            onClick = {
+                keyboardController?.hide()
+                onClick()
+            },
             modifier = Modifier
                 .padding(vertical = 10.dp)
                 .fillMaxWidth(if (configuration == Configuration.ORIENTATION_PORTRAIT) 1.0f else 0.8f),

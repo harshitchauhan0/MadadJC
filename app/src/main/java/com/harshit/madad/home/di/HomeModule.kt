@@ -11,7 +11,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(SingletonComponent::class)
 object HomeModule {
@@ -20,12 +19,9 @@ object HomeModule {
     fun providesHomeRepository(application: Application): HomeRepository {
         return HomeRepositoryIMPL(application)
     }
-
     @Provides
     @Singleton
     fun providesLogOutUseCase(homeRepository: HomeRepository): LogOutUseCase {
         return LogOutUseCase(homeRepository)
     }
-
-
 }

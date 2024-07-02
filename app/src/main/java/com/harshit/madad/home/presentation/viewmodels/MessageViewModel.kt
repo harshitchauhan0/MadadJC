@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshit.madad.common.Constants
-import com.harshit.madad.home.data.remote.dto.Guardian
+import com.harshit.madad.home.data.remote.dto.ContactItem
 import com.harshit.madad.home.util.MessageState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -32,7 +32,7 @@ class MessageViewModel @Inject constructor() : ViewModel() {
             delay(5000)
             _state.value = MessageState(
                 guardians = List(20) {
-                    Guardian(
+                    ContactItem(
                         id = it,
                         name = "$it. Harshit",
                         phoneNumber = "tel: $it 4546545"

@@ -46,15 +46,14 @@ import androidx.navigation.NavHostController
 import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.components.LoadingIndicator
 import com.harshit.madad.home.data.remote.dto.ContactItem
-import com.harshit.madad.home.presentation.viewmodels.ProfileViewModel
+import com.harshit.madad.home.presentation.viewmodels.GuardianViewModel
 import com.harshit.madad.ui.theme.darkViolet
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun GuardianScreen(
     controller: NavHostController,
-    modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: GuardianViewModel = hiltViewModel()
 ) {
     val state by viewModel.contactState.collectAsState()
     Box(
@@ -236,7 +235,7 @@ fun ContactSection(modifier: Modifier = Modifier, name: String, phoneNumber: Str
 }
 
 @Composable
-fun SuperGuardianTextSection(modifier: Modifier = Modifier) {
+fun SuperGuardianTextSection() {
     var isOpen by rememberSaveable {
         mutableStateOf(false)
     }

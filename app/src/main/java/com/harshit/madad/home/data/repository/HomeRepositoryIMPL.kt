@@ -21,8 +21,7 @@ class HomeRepositoryIMPL(private val application: Application) : HomeRepository 
     }
 
     override fun getData(): UserInfo {
-        val sharedPreferences =
-            application.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
+        val sharedPreferences = application.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
         val name = sharedPreferences.getString(Constants.NAME_KEY, "")
         val phone = sharedPreferences.getString(Constants.PHONE_KEY, "")
         return UserInfo(name ?: "", phone ?: "")

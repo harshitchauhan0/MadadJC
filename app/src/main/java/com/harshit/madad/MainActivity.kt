@@ -16,21 +16,27 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.firestore.FirebaseFirestore
 import com.harshit.madad.authentication.presentation.components.LoginScreen
 import com.harshit.madad.authentication.presentation.components.SignUpScreen
 import com.harshit.madad.authentication.presentation.components.WelcomeScreen
 import com.harshit.madad.common.AppScreen
 import com.harshit.madad.common.splash.SplashScreen
-import com.harshit.madad.home.data.remote.dto.Guardian
+import com.harshit.madad.home.data.remote.dto.ContactItem
 import com.harshit.madad.home.presentation.components.GuardianScreen
 import com.harshit.madad.home.presentation.components.HomeScreen
 import com.harshit.madad.home.presentation.components.MessageScreen
 import com.harshit.madad.home.presentation.components.ProfileScreen
 import com.harshit.madad.ui.theme.MadadTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val db = FirebaseFirestore.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -153,7 +159,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun messageGuardian(guardian: List<Guardian>, message: String) {
+    private fun messageGuardian(guardian: List<ContactItem>, message: String) {
 
     }
 

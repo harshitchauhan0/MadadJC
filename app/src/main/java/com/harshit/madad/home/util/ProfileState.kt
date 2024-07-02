@@ -1,9 +1,9 @@
 package com.harshit.madad.home.util
 
-import com.harshit.madad.home.data.remote.dto.Guardian
+import com.harshit.madad.home.data.remote.dto.ContactItem
 
-data class ProfileState (
-    val guardians: List<Guardian> = emptyList(),
+data class ProfileState(
+    val guardians: List<ContactItem> = emptyList(),
     val isLoading: Boolean = false,
     val error: String = "",
 )
