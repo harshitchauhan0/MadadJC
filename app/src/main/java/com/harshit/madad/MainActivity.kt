@@ -159,7 +159,7 @@ class MainActivity : ComponentActivity() {
                             })
                         }
                         composable(AppScreen.MainScreen.GuardianScreen.route) {
-                            GuardianScreen()
+                            GuardianScreen(controller = navController)
                         }
                         composable(AppScreen.MainScreen.ProfileScreen.route) {
                             ProfileScreen(controller = navController)

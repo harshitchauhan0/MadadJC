@@ -86,20 +86,17 @@ fun SuperGuardianSection(viewModel: MessageViewModel = hiltViewModel()) {
         animationSpec = tween(durationMillis = 1000),
         label = "Translate Y"
     )
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.graphicsLayer {
-            this.alpha = alpha
-            this.translationY = translateY
-        }) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.graphicsLayer {
+        this.alpha = alpha
+        this.translationY = translateY
+    }) {
         RadioButton(
             selected = viewModel.superGuardianSelected.value,
             onClick = { viewModel.onSuperGuardianSelected(!viewModel.superGuardianSelected.value) },
             colors = RadioButtonDefaults.colors(selectedColor = Color(0xFF771F54))
         )
         Text(
-            text = "Super Guardian",
-            fontSize = 15.sp
+            text = "Super Guardian", fontSize = 15.sp
         )
     }
 }
@@ -110,10 +107,9 @@ fun MessageContent(modifier: Modifier = Modifier, viewModel: MessageViewModel = 
     Column(
         modifier = modifier
             .fillMaxWidth(if (configuration == Configuration.ORIENTATION_PORTRAIT) 1.0f else 0.85f)
-            .fillMaxHeight(1f)
+            .fillMaxHeight()
             .background(
-                shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
-                color = Color.White
+                shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp), color = Color.White
             )
             .padding(horizontal = 16.dp)
             .verticalScroll(rememberScrollState()),
@@ -130,7 +126,7 @@ fun MessageContent(modifier: Modifier = Modifier, viewModel: MessageViewModel = 
         Spacer(modifier = Modifier.height(16.dp))
         SuperGuardianSection()
         MessageHelpingText(
-            text = "Super Guardian will be CALLED along with MESSAGED during Emergency Situations. Please note that there can be only one Super Guardian."
+            text = stringResource(id = R.string.super_guardian_text)
         )
         Spacer(modifier = Modifier.height(16.dp))
     }
@@ -186,8 +182,7 @@ fun MessageHelpingText(modifier: Modifier = Modifier, text: String) {
         animationSpec = tween(durationMillis = 1000),
         label = "Translate X"
     )
-    Text(
-        text = text,
+    Text(text = text,
         fontSize = 13.sp,
         color = Color(0xFF3C3C3C),
         lineHeight = 19.sp,
@@ -197,8 +192,7 @@ fun MessageHelpingText(modifier: Modifier = Modifier, text: String) {
                 this.translationX = translateX
                 this.alpha = alpha
                 TransformOrigin(0f, 0f)
-            }
-    )
+            })
 }
 
 @Composable

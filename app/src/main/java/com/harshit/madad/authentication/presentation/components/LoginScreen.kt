@@ -480,7 +480,8 @@ fun AuthBottomEndImage() {
 
 @Composable
 fun LoadingIndicator() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
+    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background.copy(alpha = 0.2f)))
+    Box(modifier = Modifier.fillMaxSize().clickable {  }, contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(color = lightGrey)
     }
 }

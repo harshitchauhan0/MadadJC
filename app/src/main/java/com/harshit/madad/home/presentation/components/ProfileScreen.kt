@@ -2,7 +2,10 @@ package com.harshit.madad.home.presentation.components
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.repeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
@@ -25,6 +28,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
@@ -37,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -45,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -73,7 +79,7 @@ import com.harshit.madad.ui.theme.lightGreen
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProfileScreen(controller: NavHostController, viewModel: ProfileViewModel = hiltViewModel()) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.profileState.collectAsState()
     val nameState by viewModel.nameState.collectAsState()
     val emailState by viewModel.emailState.collectAsState()
     var isOpen by rememberSaveable { mutableStateOf(false) }
@@ -344,7 +350,9 @@ fun ScreenHeading(
     heading: String,
     modifier: Modifier = Modifier,
     backGroundColor: Color = MaterialTheme.colorScheme.background,
-    color: Color = Color.Black
+    color: Color = Color.Black,
+    showRefresh: Boolean = false,
+    onRefreshClick: () -> Unit = {}
 ) {
     var isOpen by rememberSaveable {
         mutableStateOf(false)
@@ -386,5 +394,29 @@ fun ScreenHeading(
             textAlign = TextAlign.Center,
             color = color
         )
+        if (showRefresh) {
+            var rotateDegree by remember { mutableFloatStateOf(0f) }
+
+            val rotate by animateFloatAsState(
+                targetValue = rotateDegree,
+                animationSpec = tween(durationMillis = 500), label = ""
+            )
+
+            Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = "Refresh",
+                modifier = Modifier
+                    .graphicsLayer {
+                        rotationZ = rotate
+                    }
+                    .clip(CircleShape)
+                    .clickable {
+                        rotateDegree += 360f
+                        onRefreshClick()
+                    }
+                    .align(Alignment.TopEnd),
+                tint = color
+            )
+        }
     }
 }

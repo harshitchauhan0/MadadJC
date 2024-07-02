@@ -8,4 +8,7 @@
     <string name="message_screen_heading">Message</string>
     <string name="message_screen_info">This message will be sent to your emergency contacts. You can edit the message before sending.</string>
     <string name="message_placeholder">Enter Message</string>
+    <string name="guardian_screen_heading">Guardians</string>
+    <string name="super_guardian_text">Super Guardian will be CALLED along with MESSAGED during Emergency Situations. Please note that there can be only one Super Guardian.</string>
+    <string name="guardian_helping_text">Select up to five guardians, including one super guardian.</string>
 </resources>

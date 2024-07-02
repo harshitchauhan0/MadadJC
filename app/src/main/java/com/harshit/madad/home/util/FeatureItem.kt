@@ -9,6 +9,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.harshit.madad.common.AppScreen
+import com.harshit.madad.ui.theme.darkViolet
+import com.harshit.madad.ui.theme.lightViolet
 
 @Immutable
 data class FeatureItem(
@@ -40,9 +42,9 @@ val featureList = listOf(
     FeatureItem(
         text = "Set Guardian",
         imageVector = Icons.Default.Favorite,
-        iconTint = Color(0xFFC465C6),
+        iconTint = darkViolet,
         contentDescription = "Set Guardian",
-        backGroundColor = Color(0xFFF6E7F7),
+        backGroundColor = lightViolet,
         route = AppScreen.MainScreen.GuardianScreen.route
     ),
 
