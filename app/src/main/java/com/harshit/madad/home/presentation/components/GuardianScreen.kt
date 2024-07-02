@@ -135,7 +135,7 @@ fun ContactListItem(
     item: ContactItem
 ) {
     val gradient = Brush.horizontalGradient(
-        colors = listOf(darkViolet.copy(alpha = 0.8f), darkViolet.copy(alpha = 0.3f), darkViolet.copy(alpha = 0.0f))
+        colors = listOf(darkViolet.copy(alpha = 0.0f), darkViolet.copy(alpha = 0.5f), darkViolet.copy(alpha = 0.0f))
     )
     Card(
         modifier = Modifier
