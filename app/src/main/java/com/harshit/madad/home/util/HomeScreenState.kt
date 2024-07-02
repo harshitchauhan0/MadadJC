@@ -1,8 +1,9 @@
 package com.harshit.madad.home.util
 
-data class CallState(
+data class HomeScreenState(
     val isLoading: Boolean = false,
     val error: String = "",
     val number: String = "",
-    val isCalling: Boolean = false
+    val isCalling: Boolean = false,
+    val name: String = ""
 )

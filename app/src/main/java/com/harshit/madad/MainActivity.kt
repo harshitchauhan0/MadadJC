@@ -117,7 +117,14 @@ class MainActivity : ComponentActivity() {
                         composable(AppScreen.MainScreen.HomeScreen.route) {
                             HomeScreen(
                                 controller = navController,
-                                onCallClick = ::callSuperGuardian
+                                onCallClick = ::callSuperGuardian,
+                                onLogout = {
+                                    navController.navigate(AppScreen.RegisterScreen.WelcomeScreen.route) {
+                                        popUpTo(AppScreen.MainScreen.HomeScreen.route) {
+                                            inclusive = true
+                                        }
+                                    }
+                                }
                             )
                         }
                         composable(AppScreen.MainScreen.MessageScreen.route) {

@@ -120,9 +120,9 @@ fun ProfileScreen(controller: NavHostController, viewModel: ProfileViewModel = h
                     ProfileText("Email", isOpen)
                     ProfileTextField(
                         emailState.text,
-                        viewModel::emailValueChange,
-                        emailState.isEditing,
-                        viewModel::toggleEditEmail
+                        {},
+                        true,
+                        {}
                     )
                 }
             }
@@ -323,7 +323,8 @@ fun ProfileTextField(
     value: String, onValueChange: (String) -> Unit, isReadOnly: Boolean, onEditClick: () -> Unit
 ) {
     val configuration = LocalConfiguration.current.orientation
-    OutlinedTextField(maxLines = 1,
+    OutlinedTextField(
+        maxLines = 1,
         value = value,
         onValueChange = onValueChange,
         modifier = Modifier
@@ -338,10 +339,15 @@ fun ProfileTextField(
         ),
         readOnly = isReadOnly,
         trailingIcon = {
-            Icon(imageVector = Icons.Default.Edit,
-                contentDescription = "Edit",
-                modifier = Modifier.clickable { onEditClick() })
-        })
+            if (!isReadOnly) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit",
+                    modifier = Modifier.clickable { onEditClick() }
+                )
+            }
+        }
+    )
 }
 
 @Composable

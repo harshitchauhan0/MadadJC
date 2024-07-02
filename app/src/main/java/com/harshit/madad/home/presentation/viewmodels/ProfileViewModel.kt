@@ -74,16 +74,8 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
         _nameState.value = _nameState.value.copy(text = newName)
     }
 
-    fun emailValueChange(newEmail: String) {
-        _emailState.value = _emailState.value.copy(text = newEmail)
-    }
-
     fun toggleEditName() {
         _nameState.value = _nameState.value.copy(isEditing = !_nameState.value.isEditing)
-    }
-
-    fun toggleEditEmail() {
-        _emailState.value = _emailState.value.copy(isEditing = !_nameState.value.isEditing)
     }
 
     fun updateNameAndEmail() {

@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.harshit.madad.common.Constants
 import com.harshit.madad.home.data.remote.dto.Guardian
 import com.harshit.madad.home.util.MessageState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,15 +20,11 @@ class MessageViewModel @Inject constructor() : ViewModel() {
     private val _state = MutableStateFlow(MessageState())
     val state: StateFlow<MessageState> = _state.asStateFlow()
 
-    private val _message = mutableStateOf(DEFAULT_MESSAGE)
+    private val _message = mutableStateOf(Constants.DEFAULT_MESSAGE)
     val message: State<String> = _message
 
     private val _superGuardianSelected = mutableStateOf(true)
     val superGuardianSelected: State<Boolean> = _superGuardianSelected
-
-    companion object {
-        private const val DEFAULT_MESSAGE: String = "Help! I'm in danger and need assistance. Please send help immediately."
-    }
 
     fun loadGuardians() {
         viewModelScope.launch {

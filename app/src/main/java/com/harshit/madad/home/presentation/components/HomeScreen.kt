@@ -72,6 +72,7 @@ import androidx.navigation.NavHostController
 import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.components.ErrorMessage
 import com.harshit.madad.authentication.presentation.components.LoadingIndicator
+import com.harshit.madad.common.AppScreen
 import com.harshit.madad.home.presentation.viewmodels.HomeViewModel
 import com.harshit.madad.home.util.FeatureItem
 import com.harshit.madad.home.util.featureList
@@ -85,7 +86,8 @@ fun HomeScreen(
     controller: NavHostController,
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
-    onCallClick: (String) -> Unit
+    onCallClick: (String) -> Unit,
+    onLogout: () -> Unit
 ) {
     var isOpen by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -96,7 +98,10 @@ fun HomeScreen(
         onCallClick(callState.number)
     }
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-        TopBar(onLogout = viewModel::onLogout, name = "Harshit", isOpen)
+        TopBar(onLogout = {
+            viewModel.onLogout()
+            onLogout()
+        }, name = callState.name, isOpen)
     }) { paddingValues ->
         LazyVerticalGrid(
             columns = GridCells.Fixed(2), modifier = Modifier
