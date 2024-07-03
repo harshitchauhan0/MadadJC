@@ -17,10 +17,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
@@ -66,7 +70,6 @@ fun GuardianScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .padding(bottom = 16.dp)
         ) {
             stickyHeader {
                 ScreenHeading(
@@ -109,6 +112,28 @@ fun GuardianScreen(
                 )
             }
         }
+        if (state.error.isNotEmpty()) {
+            Text(
+                text = state.error,
+                color = Color.Red,
+                modifier = Modifier.align(Alignment.BottomCenter)
+                    .padding(16.dp)
+            )
+        }
+
+        FloatingActionButton(
+            onClick = viewModel::saveGuardianList,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 20.dp, bottom = 24.dp),
+            containerColor = MaterialTheme.colors.background
+        ) {
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = "Save",
+                tint = darkViolet
+            )
+        }
     }
     if (state.isLoading) {
         LoadingIndicator()
@@ -134,7 +159,7 @@ fun ContactListItem(
     item: ContactItem
 ) {
     val gradient = Brush.horizontalGradient(
-        colors = listOf(darkViolet.copy(alpha = 0.0f), darkViolet.copy(alpha = 0.5f), darkViolet.copy(alpha = 0.0f))
+        colors = listOf(darkViolet.copy(alpha = 0.0f), darkViolet.copy(alpha = 0.5f), darkViolet.copy(alpha = 0.1f))
     )
     Card(
         modifier = Modifier
@@ -152,7 +177,7 @@ fun ContactListItem(
             modifier = Modifier.background(gradient).padding(top = 12.dp, bottom = 12.dp, end = 16.dp)
         ) {
             ContactRadioSection(
-                selected = item.isSelected,
+                selected = item.isSelected or item.isSuperGuardian,
                 onToggle = onToggle,
                 colors = Color.Blue
             )

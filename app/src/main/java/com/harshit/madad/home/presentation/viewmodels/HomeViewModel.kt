@@ -1,5 +1,6 @@
 package com.harshit.madad.home.presentation.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshit.madad.common.Resource
@@ -41,6 +42,7 @@ class HomeViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
+                        Log.v("TAG", "fetchUserInfo: ${result.data}")
                         _callState.value = _callState.value.copy(
                             name = result.data?.name ?: "",
                             number = result.data?.phone ?: "",
@@ -75,8 +77,11 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onCallClick() {
-        viewModelScope.launch {
-
+        if(_callState.value.number.isNotBlank() && _callState.value.number.isNotEmpty()) {
+            _callState.value = _callState.value.copy(onCallClick = {})
+        }
+        else{
+            _callState.value = _callState.value.copy(error = "Number is empty")
         }
     }
 }

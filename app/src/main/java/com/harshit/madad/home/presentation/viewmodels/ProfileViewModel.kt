@@ -1,5 +1,6 @@
 package com.harshit.madad.home.presentation.viewmodels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshit.madad.common.Resource
@@ -12,6 +13,7 @@ import com.harshit.madad.home.domain.use_cases.SaveNameUseCase
 import com.harshit.madad.home.util.ContactState
 import com.harshit.madad.home.util.EditTextState
 import com.harshit.madad.home.util.GuardianDialogState
+import com.harshit.madad.home.util.MessageState
 import com.harshit.madad.home.util.ProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -32,7 +34,6 @@ class ProfileViewModel @Inject constructor(
     private val removeGuardianUseCase: RemoveGuardianUseCase,
     private val getEmailsUseCase: EmailUseCase
 ) : ViewModel() {
-
     private val _profileState = MutableStateFlow(ProfileState())
     val profileState: StateFlow<ProfileState> = _profileState.asStateFlow()
 
@@ -67,7 +68,12 @@ class ProfileViewModel @Inject constructor(
             getGuardianListUseCase.invoke().collectLatest { result ->
                 when (result) {
                     is Resource.Success -> {
-                        _profileState.value = ProfileState(guardians = result.data ?: emptyList())
+                        val filteredGuardians = result.data?.filter { it.isSelected } ?: emptyList()
+                        _profileState.value = ProfileState(
+                            guardians = filteredGuardians,
+                            isLoading = false,
+                            error = ""
+                        )
                     }
 
                     is Resource.Error -> {

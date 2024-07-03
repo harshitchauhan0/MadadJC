@@ -2,6 +2,7 @@ package com.harshit.madad
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -157,6 +158,7 @@ class MainActivity : ComponentActivity() {
         if (checkCallPermission()) {
 
         }
+        Log.v("TAG", "callSuperGuardian: $number")
     }
 
     private fun messageGuardian(guardian: List<ContactItem>, message: String) {

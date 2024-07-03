@@ -94,9 +94,7 @@ fun HomeScreen(
         isOpen = true
     }
     val callState by viewModel.callState.collectAsState()
-    if (callState.isCalling) {
-        onCallClick(callState.number)
-    }
+
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
         TopBar(onLogout = {
             viewModel.onLogout()
@@ -120,7 +118,9 @@ fun HomeScreen(
                 }
             }
             items(count = featureList.size, key = { it }) {
-                FeatureCard(featureList[it], isOpen, controller, viewModel::onCallClick)
+                FeatureCard(featureList[it], isOpen, controller) {
+                    onCallClick(callState.number)
+                }
             }
         }
     }
