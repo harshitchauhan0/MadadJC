@@ -1,12 +1,13 @@
 package com.harshit.madad.authentication.data.repository
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.harshit.madad.authentication.domain.repository.AuthRepository
-import kotlinx.coroutines.delay
-import javax.inject.Inject
+import com.harshit.madad.common.Constants
 
-class AuthRepositoryIMPL : AuthRepository {
+class AuthRepositoryIMPL(private val application: Application) : AuthRepository {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     override fun createUser(
         email: String,
@@ -30,8 +31,11 @@ class AuthRepositoryIMPL : AuthRepository {
         onSignInSuccess: () -> Unit,
         onSignInFailed: (Exception) -> Unit
     ) {
+        val sharedPreferences = application.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
+                sharedPreferences.edit().putBoolean(Constants.LOGGED_IN_KEY, true).apply()
+                sharedPreferences.edit().putString(Constants.EMAIL_KEY,email).apply()
                 onSignInSuccess()
             } else {
                 onSignInFailed(task.exception!!)
@@ -54,6 +58,7 @@ class AuthRepositoryIMPL : AuthRepository {
     }
 
     override fun checkUserExist(): Boolean {
-        return FirebaseAuth.getInstance().currentUser != null
+        val sharedPreferences = application.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getBoolean(Constants.LOGGED_IN_KEY, false)
     }
 }

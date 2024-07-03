@@ -14,11 +14,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object MessageModule {
-    @Provides
-    @Singleton
-    fun providesMessageRepository(): MessageRepository {
-        return MessageRepositoryIMPL()
-    }
 
     @Provides
     @Singleton

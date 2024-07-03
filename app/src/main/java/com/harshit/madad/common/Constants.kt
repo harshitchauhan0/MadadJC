@@ -1,6 +1,8 @@
 package com.harshit.madad.common
 
 object Constants {
+    const val EMAIL_KEY = "email"
+    const val LOGGED_IN_KEY = "loggedIn"
     const val CONTACT_LIST_CHANGED = "contactListChanged"
     const val NAME_CHANGED = "nameChanged"
     const val SHARED_PREFERENCE_NAME = "MyPrefs"

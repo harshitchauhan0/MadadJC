@@ -7,13 +7,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.harshit.madad.common.Constants
+import com.harshit.madad.home.data.data_src.ContactDao
 import com.harshit.madad.home.data.remote.dto.ContactItem
 import com.harshit.madad.home.domain.repository.ProfileRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 
-class ProfileRepositoryIMPL(private val application: Application) : ProfileRepository {
-    private val auth = FirebaseAuth.getInstance()
-    private val database = FirebaseFirestore.getInstance()
+class ProfileRepositoryIMPL(private val application: Application, private val dao: ContactDao) :
+    ProfileRepository {
+    //    private val auth = FirebaseAuth.getInstance()
     override fun saveName(name: String) {
         val sharedPreferences =
             application.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
@@ -28,31 +30,17 @@ class ProfileRepositoryIMPL(private val application: Application) : ProfileRepos
     }
 
     override fun getEmail(): String {
-        return auth.currentUser?.email ?: ""
+        val sharedPreferences =
+            application.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(Constants.EMAIL_KEY, "") ?: ""
     }
 
     override suspend fun removeGuardian(contactItem: ContactItem) {
-        Log.v("TAG", "removeGuardian: $contactItem")
         val item = contactItem.copy(isSelected = false, isSuperGuardian = false)
-        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not authenticated")
-        database.collection("Users").document(userId)
-            .collection("contacts")
-            .document(contactItem.id.toString())
-            .set(item)
-            .await()
+        dao.insertContact(item)
     }
 
     override suspend fun guardianList(): List<ContactItem> {
-        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not authenticated")
-        val result = mutableListOf<ContactItem>()
-        val documents = database.collection("Users").document(userId).collection("contacts")
-            .get()
-            .await()
-
-        for (document in documents) {
-            val contactItem = document.toObject(ContactItem::class.java)
-            result.add(contactItem)
-        }
-        return result
+        return dao.getAllContacts()
     }
 }

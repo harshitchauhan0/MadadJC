@@ -13,6 +13,8 @@ class HomeRepositoryIMPL(private val application: Application) : HomeRepository 
     override fun logout(): Boolean {
         try {
             auth.signOut()
+            val sharedPreferences = application.getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
+            sharedPreferences.edit().putBoolean(Constants.LOGGED_IN_KEY,false).apply()
             return true
         } catch (e: Exception) {
             Log.v("TAG", e.message.toString())

@@ -1,5 +1,6 @@
 package com.harshit.madad.authentication.di
 
+import android.app.Application
 import com.harshit.madad.authentication.data.repository.AuthRepositoryIMPL
 import com.harshit.madad.authentication.domain.repository.AuthRepository
 import dagger.Module
@@ -13,7 +14,7 @@ import javax.inject.Singleton
 object AuthModule {
     @Provides
     @Singleton
-    fun providesAuthRepository(): AuthRepository{
-        return AuthRepositoryIMPL()
+    fun providesAuthRepository(application: Application): AuthRepository{
+        return AuthRepositoryIMPL(application)
     }
 }

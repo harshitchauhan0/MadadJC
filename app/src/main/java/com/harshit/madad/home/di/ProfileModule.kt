@@ -19,12 +19,6 @@ import javax.inject.Singleton
 object ProfileModule {
     @Provides
     @Singleton
-    fun providesProfileRepository(application: Application): ProfileRepository {
-        return ProfileRepositoryIMPL(application)
-    }
-
-    @Provides
-    @Singleton
     fun providesSaveNameUseCase(profileRepository: ProfileRepository): SaveNameUseCase {
         return SaveNameUseCase(profileRepository)
     }

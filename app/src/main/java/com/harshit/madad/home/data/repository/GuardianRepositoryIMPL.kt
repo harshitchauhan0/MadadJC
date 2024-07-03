@@ -9,21 +9,14 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.harshit.madad.common.Constants
+import com.harshit.madad.home.data.data_src.ContactDao
 import com.harshit.madad.home.data.remote.dto.ContactItem
 import com.harshit.madad.home.domain.repository.GuardianRepository
 import kotlinx.coroutines.tasks.await
 
-class GuardianRepositoryIMPL(private val application: Application) : GuardianRepository {
-    private val database = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
+class GuardianRepositoryIMPL(private val application: Application, private val dao: ContactDao) :
+    GuardianRepository {
     override suspend fun saveGuardianList(guardianList: List<ContactItem>) {
-        val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not authenticated")
-        val userDocRef = database.collection("Users").document(userId)
-        val batch = database.batch()
-        guardianList.forEach { contactItem ->
-            val docRef = userDocRef.collection("contacts").document(contactItem.id.toString())
-            batch.set(docRef, contactItem)
-        }
         if (guardianList.any { it.isSuperGuardian }) {
             val sharedPreferences = application.getSharedPreferences(
                 Constants.SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE
@@ -32,7 +25,7 @@ class GuardianRepositoryIMPL(private val application: Application) : GuardianRep
                 Constants.PHONE_KEY, guardianList.find { it.isSuperGuardian }?.phoneNumber
             ).apply()
         }
-        batch.commit().await()
+        dao.insertContacts(guardianList)
     }
 
     override suspend fun getContacts(): List<ContactItem> {
@@ -61,7 +54,7 @@ class GuardianRepositoryIMPL(private val application: Application) : GuardianRep
                 number = it.getString(numberIndex)
                 number = number.replace(" ", "")
                 if (!mobileNoSet.contains(number)) {
-                    contacts.add(ContactItem(name = name, phoneNumber =  number, id = id.toInt()))
+                    contacts.add(ContactItem(name = name, phoneNumber = number, id = id.toInt()))
                     mobileNoSet.add(number)
                 }
             }

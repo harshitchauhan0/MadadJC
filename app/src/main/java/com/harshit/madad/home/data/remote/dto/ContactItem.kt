@@ -1,23 +1,18 @@
 package com.harshit.madad.home.data.remote.dto
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.UUID
 
+@Entity
 data class ContactItem(
+    @PrimaryKey val id: Int? = null,
     val name: String = "",
     val phoneNumber: String = "",
     var isSelected: Boolean = false,
     var isSuperGuardian: Boolean = false,
-    val key: String = UUID.randomUUID().toString(),
-    val id: Int? = null
+    val key: String = UUID.randomUUID().toString()
 ) {
-    fun toggleSelection(): ContactItem {
-        return copy(isSelected = !isSelected)
-    }
-
-    fun setIsSuperGuardian(isSuperGuardian: Boolean): ContactItem {
-        return copy(isSuperGuardian = isSuperGuardian)
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

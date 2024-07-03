@@ -133,7 +133,6 @@ fun HomeScreen(
             items(count = featureList.size, key = { it }) {
                 FeatureCard(featureList[it], isOpen, controller) {
                     onCallClick(callState.number)
-                    viewModel.onCallClick()
                 }
             }
         }

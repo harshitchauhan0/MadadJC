@@ -14,11 +14,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object GuardianModule {
-    @Provides
-    @Singleton
-    fun providesGuardianRepository(application: Application): GuardianRepository {
-        return GuardianRepositoryIMPL(application)
-    }
 
     @Provides
     @Singleton

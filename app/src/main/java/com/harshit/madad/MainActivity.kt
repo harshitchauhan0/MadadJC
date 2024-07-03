@@ -1,6 +1,8 @@
 package com.harshit.madad
 
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -154,6 +156,12 @@ class MainActivity : ComponentActivity() {
 
     private fun callSuperGuardian(number: String) {
         if (checkCallPermission()) {
+            val intent = Intent(Intent.ACTION_CALL).apply {
+                data = Uri.parse("tel:$number")
+            }
+            startActivity(intent)
+        }
+        else{
 
         }
     }

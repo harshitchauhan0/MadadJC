@@ -44,7 +44,8 @@ class HomeViewModel @Inject constructor(
                         _callState.value = _callState.value.copy(
                             name = result.data?.name ?: "",
                             number = result.data?.phone ?: "",
-                            isLoading = false
+                            isLoading = false,
+                            error = ""
                         )
                     }
                 }
@@ -72,9 +73,5 @@ class HomeViewModel @Inject constructor(
                 }
             }.launchIn(this)
         }
-    }
-
-    fun onCallClick() {
-        _callState.value = _callState.value.copy(error = "Number is empty")
     }
 }
