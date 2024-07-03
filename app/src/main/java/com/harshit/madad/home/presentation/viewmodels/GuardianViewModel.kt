@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshit.madad.common.Resource
 import com.harshit.madad.home.data.remote.dto.ContactItem
+import com.harshit.madad.home.domain.use_cases.GetContactsUseCase
 import com.harshit.madad.home.domain.use_cases.GetGuardianListUseCase
 import com.harshit.madad.home.domain.use_cases.SaveGuardianListUseCase
 import com.harshit.madad.home.util.ContactState
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class GuardianViewModel @Inject constructor(
     private val getGuardianListUseCase: GetGuardianListUseCase,
-    private val saveGuardianListUseCase: SaveGuardianListUseCase
+    private val saveGuardianListUseCase: SaveGuardianListUseCase,
+    private val getContactsUseCase: GetContactsUseCase
 ) : ViewModel() {
 
     private val _contactState = MutableStateFlow(ContactState())
@@ -38,8 +40,9 @@ class GuardianViewModel @Inject constructor(
             getGuardianListUseCase.invoke().collectLatest { result ->
                 when (result) {
                     is Resource.Success -> {
+                        val list = result.data ?: emptyList()
                         _contactState.value = ContactState(
-                            contactList = result.data ?: emptyList(), isLoading = false, error = ""
+                            contactList = list.sortedBy { it.name }, isLoading = false, error = ""
                         )
                     }
 
@@ -63,7 +66,8 @@ class GuardianViewModel @Inject constructor(
                 item
             }
         }
-        _contactState.value = _contactState.value.copy(contactList = updatedList)
+        _contactState.value =
+            _contactState.value.copy(contactList = updatedList.sortedBy { it.name })
     }
 
     fun showGuardianDialog(show: Boolean, contactItem: ContactItem? = null) {
@@ -81,27 +85,39 @@ class GuardianViewModel @Inject constructor(
                     contactItem
                 }
             }
-            _contactState.value = _contactState.value.copy(contactList = updatedList)
+            _contactState.value =
+                _contactState.value.copy(contactList = updatedList.sortedBy { it.name })
         }
     }
 
     fun fetchContacts() {
         viewModelScope.launch {
-            val contacts = MutableList(30) {
-                ContactItem(
-                    name = "Contact $it",
-                    phoneNumber = "1234567890",
-                    id = it
-                )
+            getContactsUseCase.invoke().collectLatest { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val contact = result.data
+                        if (contact != null) {
+                            val contactList: List<ContactItem> = contact.map { contactItem ->
+                                (if (_contactState.value.contactList.any { it.id == contactItem.id }) {
+                                    _contactState.value.contactList.find { it.id == contactItem.id }
+                                } else {
+                                    contactItem
+                                })!!
+                            }
+                            saveGuardianList(contactList)
+                        }
+                    }
+
+                    is Resource.Error -> {
+                        _contactState.value =
+                            _contactState.value.copy(error = result.message ?: "Unknown Error")
+                    }
+
+                    is Resource.Loading -> {
+                        _contactState.value = _contactState.value.copy(isLoading = true)
+                    }
+                }
             }
-            val contactList: List<ContactItem> = contacts.map { contactItem ->
-                (if (_contactState.value.contactList.any { it.id == contactItem.id }) {
-                    _contactState.value.contactList.find { it.id == contactItem.id }
-                } else {
-                    contactItem
-                })!!
-            }
-            saveGuardianList(contactList)
         }
     }
 
@@ -123,7 +139,7 @@ class GuardianViewModel @Inject constructor(
 
                     is Resource.Success -> {
                         _contactState.value = _contactState.value.copy(
-                            isLoading = false, error = "", contactList = list
+                            isLoading = false, error = "", contactList = list.sortedBy { it.name }
                         )
                     }
 

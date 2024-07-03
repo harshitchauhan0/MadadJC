@@ -4,4 +4,6 @@ import com.harshit.madad.home.data.remote.dto.ContactItem
 
 interface GuardianRepository {
     suspend fun saveGuardianList(guardianList: List<ContactItem>)
+
+    suspend fun getContacts():List<ContactItem>
 }

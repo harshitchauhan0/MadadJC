@@ -2,10 +2,7 @@ package com.harshit.madad.home.presentation.components
 
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.repeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleOut
@@ -40,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +48,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -71,6 +68,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.harshit.madad.R
 import com.harshit.madad.common.AppScreen
+import com.harshit.madad.common.Constants
 import com.harshit.madad.home.data.remote.dto.ContactItem
 import com.harshit.madad.home.presentation.viewmodels.ProfileViewModel
 import com.harshit.madad.ui.theme.MyTypography
@@ -87,6 +85,17 @@ fun ProfileScreen(controller: NavHostController, viewModel: ProfileViewModel = h
     LaunchedEffect(Unit) {
         isOpen = true
     }
+
+//    This is if we are changing list in guardian screen
+    controller.currentBackStackEntry
+        ?.savedStateHandle?.getStateFlow<Boolean?>(Constants.CONTACT_LIST_CHANGED, false)
+        ?.collectAsState()?.value?.let {
+            if (it) {
+                viewModel.fetchGuardianList()
+                controller.currentBackStackEntry?.savedStateHandle?.remove<Boolean>(Constants.CONTACT_LIST_CHANGED)
+            }
+        }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -129,7 +138,21 @@ fun ProfileScreen(controller: NavHostController, viewModel: ProfileViewModel = h
             }
             item {
                 Spacer(modifier = Modifier.height(12.dp))
-                ProfileButton("Continue", viewModel::updateName, isOpen)
+                ProfileButton(
+                    text = "Continue",
+                    onClick = {
+                        viewModel.updateName()
+//                      We are telling that user name has changed
+                        controller.previousBackStackEntry?.savedStateHandle?.set(
+                            Constants.NAME_CHANGED,
+                            true
+                        )
+                    },
+                    isOpen = isOpen,
+                    isEnabled = remember {
+                        derivedStateOf { nameState.isEnabled && nameState.text.isNotEmpty() }
+                    }.value
+                )
                 Spacer(modifier = Modifier.height(12.dp))
             }
             items(state.guardians, key = { it.key }) { guardian ->
@@ -251,7 +274,7 @@ fun GuardianItem(guardian: ContactItem, onRemoveGuardian: () -> Unit, modifier: 
 }
 
 @Composable
-fun ProfileButton(text: String, onClick: () -> Unit, isOpen: Boolean) {
+fun ProfileButton(text: String, onClick: () -> Unit, isOpen: Boolean, isEnabled: Boolean = true) {
     val alpha by animateFloatAsState(
         targetValue = if (isOpen) 1.0f else 0.5f,
         animationSpec = tween(durationMillis = 1000),
@@ -288,8 +311,10 @@ fun ProfileButton(text: String, onClick: () -> Unit, isOpen: Boolean) {
             ),
             shape = RoundedCornerShape(6.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = darkGreen, contentColor = Color.White
-            )
+                containerColor = darkGreen, contentColor = Color.White,
+                disabledContainerColor = Color.Gray, disabledContentColor = Color.White
+            ),
+            enabled = isEnabled
         ) {
             Text(
                 text = text, fontSize = 14.sp

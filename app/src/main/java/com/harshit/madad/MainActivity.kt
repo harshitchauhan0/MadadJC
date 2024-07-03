@@ -37,11 +37,9 @@ import kotlinx.coroutines.tasks.await
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val db = FirebaseFirestore.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContent {
             MadadTheme {
                 val navController = rememberNavController()
@@ -158,7 +156,6 @@ class MainActivity : ComponentActivity() {
         if (checkCallPermission()) {
 
         }
-        Log.v("TAG", "callSuperGuardian: $number")
     }
 
     private fun messageGuardian(guardian: List<ContactItem>, message: String) {

@@ -1,6 +1,7 @@
 package com.harshit.madad.home.presentation.viewmodels
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.harshit.madad.common.Resource
@@ -10,13 +11,9 @@ import com.harshit.madad.home.domain.use_cases.GetGuardianListUseCase
 import com.harshit.madad.home.domain.use_cases.GetUserNameUseCase
 import com.harshit.madad.home.domain.use_cases.RemoveGuardianUseCase
 import com.harshit.madad.home.domain.use_cases.SaveNameUseCase
-import com.harshit.madad.home.util.ContactState
 import com.harshit.madad.home.util.EditTextState
-import com.harshit.madad.home.util.GuardianDialogState
-import com.harshit.madad.home.util.MessageState
 import com.harshit.madad.home.util.ProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +29,7 @@ class ProfileViewModel @Inject constructor(
     private val getGuardianListUseCase: GetGuardianListUseCase,
     private val getUserNameUseCase: GetUserNameUseCase,
     private val removeGuardianUseCase: RemoveGuardianUseCase,
-    private val getEmailsUseCase: EmailUseCase
+    private val getEmailsUseCase: EmailUseCase,
 ) : ViewModel() {
     private val _profileState = MutableStateFlow(ProfileState())
     val profileState: StateFlow<ProfileState> = _profileState.asStateFlow()
@@ -44,15 +41,17 @@ class ProfileViewModel @Inject constructor(
     val emailState: StateFlow<EditTextState> = _emailState.asStateFlow()
 
     init {
-        loadProfileData()
+        fetchUserName()
+        fetchEmail()
+        fetchGuardianList()
     }
 
-    private fun loadProfileData() {
+    private fun fetchEmail() {
         viewModelScope.launch {
-            getUserNameUseCase.invoke().collectLatest { result ->
+            getEmailsUseCase.invoke().collectLatest { result ->
                 when (result) {
                     is Resource.Success -> {
-                        _nameState.value = EditTextState(text = result.data ?: "")
+                        _emailState.value = EditTextState(text = result.data ?: "")
                     }
 
                     is Resource.Error -> {
@@ -64,7 +63,31 @@ class ProfileViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
 
+    private fun fetchUserName() {
+        viewModelScope.launch {
+            getUserNameUseCase.invoke().collectLatest { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _nameState.value = EditTextState(text = result.data ?: "", isEnabled = false)
+                    }
+
+                    is Resource.Error -> {
+
+                    }
+
+                    is Resource.Loading -> {
+                        _profileState.value = _profileState.value.copy(isLoading = true)
+                    }
+                }
+            }
+        }
+    }
+
+    fun fetchGuardianList() {
+        viewModelScope.launch {
             getGuardianListUseCase.invoke().collectLatest { result ->
                 when (result) {
                     is Resource.Success -> {
@@ -85,27 +108,11 @@ class ProfileViewModel @Inject constructor(
                     }
                 }
             }
-
-            getEmailsUseCase.invoke().collectLatest { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        _emailState.value = EditTextState(text = result.data ?: "")
-                    }
-
-                    is Resource.Error -> {
-
-                    }
-
-                    is Resource.Loading -> {
-                        _profileState.value = _profileState.value.copy(isLoading = true)
-                    }
-                }
-            }
         }
     }
 
     fun nameValueChange(newName: String) {
-        _nameState.value = _nameState.value.copy(text = newName)
+        _nameState.value = _nameState.value.copy(text = newName, isEnabled = true)
     }
 
     fun toggleEditName() {
@@ -118,7 +125,7 @@ class ProfileViewModel @Inject constructor(
             saveNameUseCase.invoke(newName).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        _nameState.value = _nameState.value.copy(isEditing = false)
+                        _nameState.value = _nameState.value.copy(isEditing = false, isEnabled = false)
                     }
 
                     is Resource.Error -> {
@@ -139,7 +146,7 @@ class ProfileViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         val updatedGuardians = _profileState.value.guardians - guardian
-                        _profileState.value = _profileState.value.copy(guardians = updatedGuardians)
+                        _profileState.value = _profileState.value.copy(guardians = updatedGuardians.sortedBy { it.name })
                     }
 
                     is Resource.Error -> {

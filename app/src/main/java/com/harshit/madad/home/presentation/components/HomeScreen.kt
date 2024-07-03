@@ -1,6 +1,7 @@
 package com.harshit.madad.home.presentation.components
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -68,11 +69,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.asFlow
 import androidx.navigation.NavHostController
 import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.components.ErrorMessage
 import com.harshit.madad.authentication.presentation.components.LoadingIndicator
 import com.harshit.madad.common.AppScreen
+import com.harshit.madad.common.Constants
 import com.harshit.madad.home.presentation.viewmodels.HomeViewModel
 import com.harshit.madad.home.util.FeatureItem
 import com.harshit.madad.home.util.featureList
@@ -94,6 +97,16 @@ fun HomeScreen(
         isOpen = true
     }
     val callState by viewModel.callState.collectAsState()
+
+//    This is if we are changing name in profile screen
+    controller.currentBackStackEntry
+        ?.savedStateHandle?.getStateFlow<Boolean?>(Constants.NAME_CHANGED, false)
+        ?.collectAsState()?.value?.let {
+            if (it) {
+                viewModel.fetchUserInfo()
+                controller.currentBackStackEntry?.savedStateHandle?.remove<Boolean>(Constants.NAME_CHANGED)
+            }
+        }
 
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
         TopBar(onLogout = {
@@ -120,6 +133,7 @@ fun HomeScreen(
             items(count = featureList.size, key = { it }) {
                 FeatureCard(featureList[it], isOpen, controller) {
                     onCallClick(callState.number)
+                    viewModel.onCallClick()
                 }
             }
         }
@@ -206,7 +220,6 @@ fun FeatureCard(
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
-
 
 @Composable
 fun FeatureText(isOpen: Boolean) {

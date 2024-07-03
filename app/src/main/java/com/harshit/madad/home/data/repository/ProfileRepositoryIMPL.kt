@@ -33,7 +33,7 @@ class ProfileRepositoryIMPL(private val application: Application) : ProfileRepos
 
     override suspend fun removeGuardian(contactItem: ContactItem) {
         Log.v("TAG", "removeGuardian: $contactItem")
-        val item = contactItem.copy(isSelected = false)
+        val item = contactItem.copy(isSelected = false, isSuperGuardian = false)
         val userId = auth.currentUser?.uid ?: throw IllegalStateException("User not authenticated")
         database.collection("Users").document(userId)
             .collection("contacts")

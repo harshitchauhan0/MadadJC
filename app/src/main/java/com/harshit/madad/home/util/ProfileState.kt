@@ -11,4 +11,5 @@ data class ProfileState(
 data class EditTextState(
     val isEditing: Boolean = false,
     val text: String = "",
+    val isEnabled: Boolean = true,
 )

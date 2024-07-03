@@ -17,8 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val logoutUseCase: LogOutUseCase,
-    private val userInfoUseCase: UserInfoUseCase
+    private val logoutUseCase: LogOutUseCase, private val userInfoUseCase: UserInfoUseCase
 ) : ViewModel() {
     private val _callState = MutableStateFlow(HomeScreenState())
     val callState: StateFlow<HomeScreenState> = _callState
@@ -27,7 +26,7 @@ class HomeViewModel @Inject constructor(
         fetchUserInfo()
     }
 
-    private fun fetchUserInfo() {
+     fun fetchUserInfo() {
         viewModelScope.launch {
             userInfoUseCase.invoke().onEach { result ->
                 when (result) {
@@ -42,7 +41,6 @@ class HomeViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        Log.v("TAG", "fetchUserInfo: ${result.data}")
                         _callState.value = _callState.value.copy(
                             name = result.data?.name ?: "",
                             number = result.data?.phone ?: "",
@@ -77,11 +75,6 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onCallClick() {
-        if(_callState.value.number.isNotBlank() && _callState.value.number.isNotEmpty()) {
-            _callState.value = _callState.value.copy(onCallClick = {})
-        }
-        else{
-            _callState.value = _callState.value.copy(error = "Number is empty")
-        }
+        _callState.value = _callState.value.copy(error = "Number is empty")
     }
 }

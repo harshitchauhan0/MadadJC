@@ -1,5 +1,6 @@
 package com.harshit.madad.home.presentation.components
 
+import android.util.Log
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -24,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -31,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -49,6 +52,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.components.LoadingIndicator
+import com.harshit.madad.common.Constants
 import com.harshit.madad.home.data.remote.dto.ContactItem
 import com.harshit.madad.home.presentation.viewmodels.GuardianViewModel
 import com.harshit.madad.ui.theme.darkViolet
@@ -116,17 +120,29 @@ fun GuardianScreen(
             Text(
                 text = state.error,
                 color = Color.Red,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
                     .padding(16.dp)
             )
         }
 
         FloatingActionButton(
-            onClick = viewModel::saveGuardianList,
+            onClick = {
+                controller.previousBackStackEntry?.savedStateHandle?.set(
+                    Constants.CONTACT_LIST_CHANGED,
+                    true
+                )
+                viewModel.saveGuardianList()
+                controller.navigateUp()
+            },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(end = 20.dp, bottom = 24.dp),
-            containerColor = MaterialTheme.colors.background
+            containerColor = MaterialTheme.colors.background,
+            elevation = FloatingActionButtonDefaults.elevation(
+                defaultElevation = 12.dp,
+                pressedElevation = 4.dp
+            )
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
@@ -159,7 +175,11 @@ fun ContactListItem(
     item: ContactItem
 ) {
     val gradient = Brush.horizontalGradient(
-        colors = listOf(darkViolet.copy(alpha = 0.0f), darkViolet.copy(alpha = 0.5f), darkViolet.copy(alpha = 0.1f))
+        colors = listOf(
+            darkViolet.copy(alpha = 0.0f),
+            darkViolet.copy(alpha = 0.5f),
+            darkViolet.copy(alpha = 0.1f)
+        )
     )
     Card(
         modifier = Modifier
@@ -174,7 +194,9 @@ fun ContactListItem(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.background(gradient).padding(top = 12.dp, bottom = 12.dp, end = 16.dp)
+            modifier = Modifier
+                .background(gradient)
+                .padding(top = 12.dp, bottom = 12.dp, end = 16.dp)
         ) {
             ContactRadioSection(
                 selected = item.isSelected or item.isSuperGuardian,
