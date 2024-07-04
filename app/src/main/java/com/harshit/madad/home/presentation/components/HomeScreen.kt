@@ -1,7 +1,10 @@
 package com.harshit.madad.home.presentation.components
 
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -45,6 +48,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -61,6 +65,8 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -68,9 +74,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.asFlow
 import androidx.navigation.NavHostController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.harshit.madad.R
 import com.harshit.madad.authentication.presentation.components.ErrorMessage
 import com.harshit.madad.authentication.presentation.components.LoadingIndicator
@@ -84,6 +95,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun HomeScreen(
     controller: NavHostController,
@@ -107,6 +119,7 @@ fun HomeScreen(
                 controller.currentBackStackEntry?.savedStateHandle?.remove<Boolean>(Constants.NAME_CHANGED)
             }
         }
+
 
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
         TopBar(onLogout = {
@@ -172,7 +185,7 @@ fun FeatureCard(
             modifier = Modifier
                 .fillMaxSize(maxWidth)
                 .aspectRatio(1f)
-                .padding(8.dp)
+                .padding(start = 8.dp, top = 8.dp)
                 .graphicsLayer {
                     this.scaleX = scale.value
                     this.scaleY = scale.value
@@ -197,7 +210,14 @@ fun FeatureCard(
                     },
                 contentAlignment = if (configuration == Configuration.ORIENTATION_PORTRAIT) Alignment.TopStart else Alignment.Center
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        top = 16.dp,
+                        end = 4.dp,
+                        bottom = 4.dp
+                    )
+                ) {
                     Icon(
                         imageVector = featureName.imageVector!!,
                         contentDescription = featureName.contentDescription,
@@ -209,7 +229,7 @@ fun FeatureCard(
                         style = MaterialTheme.typography.bodyLarge,
                         fontWeight = FontWeight.W700,
                         fontFamily = FontFamily.SansSerif,
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         fontStyle = MaterialTheme.typography.bodyLarge.fontStyle,
                         color = Color.Black
                     )

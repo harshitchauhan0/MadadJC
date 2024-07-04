@@ -1,6 +1,8 @@
 package com.harshit.madad.home.presentation.components
 
-import android.util.Log
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -33,7 +35,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,11 +44,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.harshit.madad.R
@@ -64,6 +67,16 @@ fun GuardianScreen(
     viewModel: GuardianViewModel = hiltViewModel()
 ) {
     val state by viewModel.contactState.collectAsState()
+    val context = LocalContext.current
+    val contactPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted) {
+                viewModel.fetchContacts()
+            }
+        }
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -86,7 +99,17 @@ fun GuardianScreen(
                     onBackClick = { controller.navigateUp() },
                     heading = stringResource(id = R.string.guardian_screen_heading),
                     showRefresh = true,
-                    onRefreshClick = viewModel::fetchContacts
+                    onRefreshClick = {
+                        if (ActivityCompat.checkSelfPermission(
+                                context,
+                                android.Manifest.permission.READ_CONTACTS
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            viewModel.fetchContacts()
+                        } else {
+                            contactPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+                        }
+                    }
                 )
                 Spacer(
                     modifier = Modifier

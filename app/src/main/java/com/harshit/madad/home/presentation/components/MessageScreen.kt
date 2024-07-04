@@ -1,6 +1,9 @@
 package com.harshit.madad.home.presentation.components
 
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -19,10 +22,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -36,7 +41,7 @@ import com.harshit.madad.ui.theme.lightPurple
 @Composable
 fun MessageScreen(
     controller: NavHostController,
-    onHelpClick: (superGuardianNumber: String, guardianList: List<ContactItem>, message: String) -> Unit,
+    onHelpClick: (isCallingSelected: Boolean, superGuardianNumber: String, guardianList: List<ContactItem>, message: String) -> Unit,
     viewModel: MessageViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -64,7 +69,11 @@ fun MessageScreen(
         LoadingIndicator()
     }
     if (state.onHelpClick) {
-        onHelpClick(state.superGuardianNumber, state.guardians, viewModel.message.value)
+        if (viewModel.superGuardianSelected.value) {
+            onHelpClick(true, state.superGuardianNumber, state.guardians, viewModel.message.value)
+        } else {
+            onHelpClick(false, "", state.guardians, viewModel.message.value)
+        }
     }
 }
 
@@ -203,6 +212,13 @@ fun HelpButton(onHelpClick: () -> Unit) {
     LaunchedEffect(Unit) {
         isOpen = true
     }
+    val context = LocalContext.current
+    val messagePermission =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) {
+            if (it) {
+                onHelpClick()
+            }
+        }
     val alpha by animateFloatAsState(
         targetValue = if (isOpen) 1.0f else 0.5f,
         animationSpec = tween(durationMillis = 1000),
@@ -215,7 +231,17 @@ fun HelpButton(onHelpClick: () -> Unit) {
     )
     val configuration = LocalConfiguration.current.orientation
     ElevatedButton(
-        onClick = onHelpClick,
+        onClick = {
+            if (ActivityCompat.checkSelfPermission(
+                    context,
+                    android.Manifest.permission.SEND_SMS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                onHelpClick()
+            } else {
+                messagePermission.launch(android.Manifest.permission.SEND_SMS)
+            }
+        },
         modifier = Modifier
             .padding(vertical = 10.dp)
             .fillMaxWidth(if (configuration == Configuration.ORIENTATION_PORTRAIT) 1.0f else 0.8f)
