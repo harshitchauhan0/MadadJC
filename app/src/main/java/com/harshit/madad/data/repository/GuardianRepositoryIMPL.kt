@@ -5,6 +5,7 @@ import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
 import android.provider.ContactsContract
+import android.util.Log
 import com.harshit.madad.common.Constants
 import com.harshit.madad.data.local.ContactDao
 import com.harshit.madad.domain.model.ContactItem
@@ -33,7 +34,6 @@ class GuardianRepositoryIMPL(private val application: Application, private val d
             null,
             ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
         )
-
         val mobileNoSet = HashSet<String>()
         val contacts = mutableListOf<ContactItem>()
         cursor?.use {

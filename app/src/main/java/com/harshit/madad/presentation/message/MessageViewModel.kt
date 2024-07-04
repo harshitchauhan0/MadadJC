@@ -28,6 +28,9 @@ class MessageViewModel @Inject constructor(
     private val _superGuardianSelected = mutableStateOf(true)
     val superGuardianSelected: State<Boolean> = _superGuardianSelected
 
+    private val _locationMessage = mutableStateOf("")
+    val locationMessage: State<String> = _locationMessage
+
     fun loadGuardians() {
         viewModelScope.launch {
             getHelperGuardianListUseCase.invoke().collectLatest { result ->
@@ -62,5 +65,9 @@ class MessageViewModel @Inject constructor(
 
     fun updateMessage(message: String) {
         _message.value = message
+    }
+
+    fun updateLocation(location: String){
+        _locationMessage.value = location
     }
 }

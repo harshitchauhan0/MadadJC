@@ -54,6 +54,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.harshit.madad.R
 import com.harshit.madad.presentation.authentication.components.LoadingIndicator
 import com.harshit.madad.common.Constants
@@ -62,7 +65,7 @@ import com.harshit.madad.presentation.message.MessageHelpingText
 import com.harshit.madad.presentation.profile.ScreenHeading
 import com.harshit.madad.ui.theme.darkViolet
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun GuardianScreen(
     controller: NavHostController,
@@ -70,15 +73,14 @@ fun GuardianScreen(
 ) {
     val state by viewModel.contactState.collectAsState()
     val context = LocalContext.current
-    val contactPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            if (isGranted) {
-                viewModel.fetchContacts()
-            }
+    var wasPermissionRequested by rememberSaveable { mutableStateOf(false) }
+    val permissionState = rememberPermissionState(Manifest.permission.READ_CONTACTS)
+    LaunchedEffect(permissionState.status) {
+        if (permissionState.status.isGranted && wasPermissionRequested) {
+            viewModel.fetchContacts()
+            wasPermissionRequested = false
         }
-    )
-
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -109,7 +111,8 @@ fun GuardianScreen(
                         ) {
                             viewModel.fetchContacts()
                         } else {
-                            contactPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
+                            wasPermissionRequested = true
+                            permissionState.launchPermissionRequest()
                         }
                     }
                 )

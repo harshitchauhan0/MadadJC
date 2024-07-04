@@ -1,8 +1,17 @@
 package com.harshit.madad.presentation.message
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.location.Location
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -30,6 +39,17 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.gms.location.SettingsClient
+import com.google.android.gms.tasks.Task
 import com.harshit.madad.R
 import com.harshit.madad.presentation.authentication.components.LoadingIndicator
 import com.harshit.madad.domain.model.ContactItem
@@ -37,6 +57,7 @@ import com.harshit.madad.presentation.profile.ScreenHeading
 import com.harshit.madad.ui.theme.darkPurple
 import com.harshit.madad.ui.theme.lightPurple
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MessageScreen(
     controller: NavHostController,
@@ -45,6 +66,58 @@ fun MessageScreen(
 ) {
     val state by viewModel.state.collectAsState()
     var isOpen by rememberSaveable { mutableStateOf(false) }
+    val context = LocalContext.current
+    val permissionState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    )
+    var wasPermissionRequest by rememberSaveable { mutableStateOf(false) }
+    var location by remember { mutableStateOf<Location?>(null) }
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    val locationRequest = LocationRequest.create().apply {
+        interval = 10000
+        fastestInterval = 5000
+        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
+
+    val locationSettingsLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            getLocation(fusedLocationClient, context) { loc ->
+                location = loc
+                loc?.let { createMapLink(it) }?.let { viewModel.updateLocation(it) }
+            }
+        }
+    }
+
+    LaunchedEffect(permissionState.allPermissionsGranted) {
+        if (permissionState.allPermissionsGranted && wasPermissionRequest) {
+            checkLocationSettings(context, locationSettingsLauncher, locationRequest) { isEnabled ->
+                if (isEnabled) {
+                    getLocation(fusedLocationClient, context) { loc ->
+                        location = loc
+                        loc?.let { createMapLink(it) }?.let { viewModel.updateLocation(it) }
+                        helpCalled(
+                            superGuardianSelected = viewModel.superGuardianSelected.value,
+                            onHelpClick = onHelpClick,
+                            superGuardianNumber = state.superGuardianNumber,
+                            guardians = state.guardians,
+                            message = viewModel.message.value + "\n" + viewModel.locationMessage.value
+                        )
+                    }
+                }
+                wasPermissionRequest = false
+            }
+        }
+    }
+
+    location?.let {
+        viewModel.updateLocation(createMapLink(it))
+    }
+
     LaunchedEffect(Unit) {
         isOpen = true
     }
@@ -68,11 +141,93 @@ fun MessageScreen(
         LoadingIndicator()
     }
     if (state.onHelpClick) {
-        if (viewModel.superGuardianSelected.value) {
-            onHelpClick(true, state.superGuardianNumber, state.guardians, viewModel.message.value)
-        } else {
-            onHelpClick(false, "", state.guardians, viewModel.message.value)
+        LaunchedEffect(Unit) {
+            if (permissionState.allPermissionsGranted) {
+                getLocation(fusedLocationClient, context) { loc ->
+                    location = loc
+                    loc?.let { createMapLink(it) }?.let { viewModel.updateLocation(it) }
+                    helpCalled(
+                        superGuardianSelected = viewModel.superGuardianSelected.value,
+                        onHelpClick = onHelpClick,
+                        superGuardianNumber = state.superGuardianNumber,
+                        guardians = state.guardians,
+                        message = viewModel.message.value + "\n" + viewModel.locationMessage.value
+                    )
+                }
+            } else {
+                wasPermissionRequest = true
+                permissionState.launchMultiplePermissionRequest()
+            }
         }
+    }
+}
+
+fun checkLocationSettings(
+    context: Context,
+    locationSettingsLauncher: ManagedActivityResultLauncher<IntentSenderRequest, ActivityResult>,
+    locationRequest: LocationRequest,
+    onComplete: (Boolean) -> Unit
+) {
+    val builder = LocationSettingsRequest.Builder()
+        .addLocationRequest(locationRequest)
+    val client: SettingsClient = LocationServices.getSettingsClient(context)
+    val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
+
+    task.addOnSuccessListener { locationSettingsResponse ->
+        onComplete(true)
+    }
+
+    task.addOnFailureListener { exception ->
+        if (exception is ResolvableApiException) {
+            try {
+                val intentSenderRequest = IntentSenderRequest.Builder(exception.resolution).build()
+                locationSettingsLauncher.launch(intentSenderRequest)
+            } catch (sendEx: IntentSender.SendIntentException) {
+                onComplete(false)
+            }
+        } else {
+            onComplete(false)
+        }
+    }
+}
+
+fun getLocation(
+    fusedLocationClient: FusedLocationProviderClient,
+    context: Context,
+    onLocationReceived: (Location?) -> Unit
+) {
+    if (ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    ) {
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { loc: Location? ->
+                onLocationReceived(loc)
+            }
+    }
+}
+
+fun createMapLink(location: Location): String {
+    val latitude = location.latitude
+    val longitude = location.longitude
+    return "https://maps.google.com/?q=$latitude,$longitude"
+}
+
+fun helpCalled(
+    superGuardianSelected: Boolean,
+    onHelpClick: (isCallingSelected: Boolean, superGuardianNumber: String, guardianList: List<ContactItem>, message: String) -> Unit,
+    superGuardianNumber: String,
+    guardians: List<ContactItem>,
+    message: String
+) {
+    if (superGuardianSelected) {
+        onHelpClick(true, superGuardianNumber, guardians, message)
+    } else {
+        onHelpClick(false, "", guardians, message)
     }
 }
 

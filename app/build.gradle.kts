@@ -120,4 +120,10 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
 
     implementation("com.google.accompanist:accompanist-permissions:0.35.1-alpha")
+
+
+    implementation ("com.google.android.gms:play-services-location:20.0.0")
+    implementation ("com.google.android.gms:play-services-analytics:18.0.2")
+    implementation ("com.google.android.gms:play-services-maps:18.2.0")
+
 }

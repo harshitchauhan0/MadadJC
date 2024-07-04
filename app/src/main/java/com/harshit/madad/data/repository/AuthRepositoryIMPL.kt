@@ -15,7 +15,6 @@ class AuthRepositoryIMPL(private val application: Application) : AuthRepository 
         onSignInSuccess: () -> Unit,
         onSignInFailed: (Exception) -> Unit
     ) {
-        Log.v("TAGG", "Clicked")
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 onSignInSuccess()
