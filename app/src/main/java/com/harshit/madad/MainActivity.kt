@@ -3,8 +3,10 @@ package com.harshit.madad
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.telephony.SmsManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,7 +21,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.firestore.FirebaseFirestore
 import com.harshit.madad.authentication.presentation.components.LoginScreen
 import com.harshit.madad.authentication.presentation.components.SignUpScreen
 import com.harshit.madad.authentication.presentation.components.WelcomeScreen
@@ -32,10 +33,7 @@ import com.harshit.madad.home.presentation.components.MessageScreen
 import com.harshit.madad.home.presentation.components.ProfileScreen
 import com.harshit.madad.ui.theme.MadadTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -155,24 +153,37 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun callSuperGuardian(number: String) {
-        if (checkCallPermission()) {
+        if (checkPermission(android.Manifest.permission.CALL_PHONE)) {
             val intent = Intent(Intent.ACTION_CALL).apply {
                 data = Uri.parse("tel:$number")
             }
             startActivity(intent)
-        }
-        else{
-
+        } else {
+//          TODO("Request CALL Permission")
         }
     }
 
     private fun messageGuardian(guardian: List<ContactItem>, message: String) {
-
+        if (checkPermission(android.Manifest.permission.SEND_SMS)) {
+            try {
+                if (guardian.isNotEmpty()) {
+                    val smsManager = getSystemService(SmsManager::class.java)
+                    guardian.forEach { contact ->
+                        smsManager.sendTextMessage(contact.phoneNumber, null, message, null, null)
+                    }
+                    Toast.makeText(applicationContext, "Message Sent", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(applicationContext, e.localizedMessage, Toast.LENGTH_LONG).show()
+            }
+        } else {
+//          TODO("REQUEST SMS PERMISSION")
+        }
     }
 
-    private fun checkCallPermission(): Boolean {
+    private fun checkPermission(permission: String): Boolean {
         return ActivityCompat.checkSelfPermission(
-            this, android.Manifest.permission.CALL_PHONE
+            this, permission
         ) == PackageManager.PERMISSION_GRANTED
     }
 }
