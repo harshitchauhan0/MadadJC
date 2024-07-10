@@ -3,19 +3,15 @@ An Android application built using Kotlin and Jetpack Compose that allows users 
 
 Features
 Emergency Call to Super Guardian
-
 Quickly make an emergency call to a pre-selected super guardian from the contact list.
 Message Guardians with Location Info
-
 Send a message containing your current location to selected guardians.
 Simultaneously make an emergency call to the super guardian.
 Profile Screen
-
 Change the user's name.
 View and manage the list of guardians.
 Remove guardians from the list if needed.
 Guardian Selection Screen
-
 Fetch the contact list from the device.
 Select contacts to designate as guardians and a super guardian.
 Installation
@@ -29,18 +25,14 @@ Run the app on your emulator or Android device.
 Usage
 Emergency Call and Messaging
 Set Up Guardians:
-
 Navigate to the "Guardians" screen.
 Select contacts to add as guardians and designate one as the super guardian.
 Profile Management:
-
 Go to the "Profile" screen.
 Change your name and manage the list of guardians.
 Emergency Call:
-
 Press the emergency call button to immediately call the super guardian.
 Send Location Info:
-
 Press the button to send your current location to all selected guardians and call the super guardian simultaneously.
 Screens
 Profile Screen
