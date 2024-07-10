@@ -1,4 +1,4 @@
-Emergency Guardian App
+<h4>Emergency Guardian App</h4>
 An Android application built using Kotlin and Jetpack Compose that allows users to quickly and easily contact their selected guardians in case of an emergency. The app provides functionality for making emergency calls to a designated super guardian, sending location-based messages to selected guardians, and managing guardian contacts.
 
 Features
