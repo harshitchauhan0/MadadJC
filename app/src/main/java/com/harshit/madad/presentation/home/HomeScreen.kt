@@ -143,6 +143,7 @@ fun HomeScreen(
 @Composable
 fun YouTubeCard() {
     val configuration = LocalConfiguration.current.orientation
+    val context = LocalContext.current
     if (configuration == Configuration.ORIENTATION_PORTRAIT) {
         Box(
             modifier = Modifier
@@ -158,15 +159,15 @@ fun YouTubeCard() {
                     pressedElevation = 0.dp
                 ),
             ) {
-                val context = LocalContext.current
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .height(40.dp)
                         .clickable {
                             openYoutubeApp(context)
-                        },
+                        }
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                        .height(40.dp)
+                        ,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
