@@ -48,6 +48,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsResponse
+import com.google.android.gms.location.Priority
 import com.google.android.gms.location.SettingsClient
 import com.google.android.gms.tasks.Task
 import com.harshit.madad.R
@@ -79,7 +80,7 @@ fun MessageScreen(
     val locationRequest = LocationRequest.create().apply {
         interval = 10000
         fastestInterval = 5000
-        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        priority = Priority.PRIORITY_HIGH_ACCURACY
     }
 
     val locationSettingsLauncher = rememberLauncherForActivityResult(

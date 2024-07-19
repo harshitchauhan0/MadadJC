@@ -1,5 +1,7 @@
 package com.harshit.madad.presentation.home
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -53,24 +55,30 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.harshit.madad.R
-import com.harshit.madad.presentation.authentication.components.ErrorMessage
-import com.harshit.madad.presentation.authentication.components.LoadingIndicator
 import com.harshit.madad.common.Constants
 import com.harshit.madad.common.FeatureItem
 import com.harshit.madad.common.featureList
+import com.harshit.madad.presentation.authentication.components.ErrorMessage
+import com.harshit.madad.presentation.authentication.components.LoadingIndicator
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+
 
 @Composable
 fun HomeScreen(
@@ -125,8 +133,66 @@ fun HomeScreen(
             }
         }
     }
+    YouTubeCard()
+
     if (callState.isLoading) {
         LoadingIndicator()
+    }
+}
+
+@Composable
+fun YouTubeCard() {
+    val configuration = LocalConfiguration.current.orientation
+    if (configuration == Configuration.ORIENTATION_PORTRAIT) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                shape = RoundedCornerShape(24.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 16.dp,
+                    pressedElevation = 0.dp
+                ),
+            ) {
+                val context = LocalContext.current
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                        .height(40.dp)
+                        .clickable {
+                            openYoutubeApp(context)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.youtube_logo),
+                        contentDescription = "Youtube Logo"
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = "Watch this tutorial for app overview",
+                        fontWeight = FontWeight.W500,
+                        style = TextStyle(color = Color.Black),
+                        textDecoration = null,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+    }
+}
+
+fun openYoutubeApp(context: Context) {
+    val intent = Intent(Intent.ACTION_VIEW, android.net.Uri.parse(Constants.TUTORIAL_LINK))
+    try {
+        context.startActivity(intent)
+    } catch (_: Exception) {
+
     }
 }
 
